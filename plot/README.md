@@ -5,8 +5,8 @@ We provide two alternatives to plot the data obtained in the experimental phase:
 * `show` uses `matplotlib` to generate plots for display
 
 The plotting script is written in `python3` and can be used invoking:
-```bash
-> python plot.py <1> <2>
+```console
+foo@bar:~$ python plot.py <1> <2>
 ```
 where `<1>` is either `pdf` or `show` and `<2>` is the (relative or absolute) path to the experimental data file and `python` should point to `python3`.
 
@@ -15,8 +15,8 @@ where `<1>` is either `pdf` or `show` and `<2>` is the (relative or absolute) pa
 The folder `example_data` contains a sample trace in the file `example`, obtained in one of our experiments.
 
 To visualize the graphs using `matplotlib`, give the following command:
-```bash
-> python plot.py show example_data/example
+```console
+foo@bar:~$ python plot.py show example_data/example
 Reading data from file: example_data/example
 * read data with total length: 10000
 * figure 1: 3d position
@@ -27,8 +27,8 @@ Reading data from file: example_data/example
 The script displays the graphs. As noted above, the first figure is a 3d plot of the crazyflie trajectory. 
 
 To get a PDF with the graphs, give the following command:
-```bash
-> python python plot.py pdf example_data/example
+```console
+foo@bar:~$ python python plot.py pdf example_data/example
 Reading data from file: example_data/example
 * read data with total length: 10000
 * saved data to intermediate file: data.csv
