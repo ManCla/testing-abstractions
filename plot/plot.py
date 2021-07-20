@@ -1,5 +1,5 @@
-import sys
 import os
+import time
 import pickle as pk
 import matplotlib.pyplot as plt
 
@@ -11,17 +11,27 @@ remove_intermediate = True
 
 class Storage:
 
-  def __init__(self, data_location, experiment_name):
+  def __init__(self):
+    pass
+
+  def save(self, directory):
+    # saves itself to file named as current date and time
+    filename = time.strftime('%d%b%Y_%H%M%S', time.localtime())
+    with open(directory+"/"+filename, "wb") as f:
+      pk.dump(self, f, protocol=pk.HIGHEST_PROTOCOL)
+
+  def open(self, data_location, experiment_name):
     self.data_location = data_location
     self.experiment_name = str(experiment_name)
 
     with open(self.data_location, 'rb') as f:
       self.data = pk.load(f)
     print('Reading data from file: \033[4m' + self.data_location + '\033[0m')
+    self.unwrap()
 
+  def unwrap(self):
     # splitting data into specific values
     self.time = self.data.t
-    self.tick = self.data.tick
     self.trace_length = len(self.time)
 
     self.position_x = self.data.pos[0, :]
@@ -69,7 +79,7 @@ class Storage:
     with open(csv_location, 'w') as f:
 
       # header for file
-      f.write('i, time, tick, ' +
+      f.write('i, time, ' +
               'position_x, position_y, position_z, ' +
               'estimated_position_x, estimated_position_y, estimated_position_z, ' +
               'setpoint_position_x, setpoint_position_y, setpoint_position_z, ' +
@@ -232,32 +242,139 @@ class Storage:
       f.write(r'}' + '\n')
       f.write(r'\end{document}' + '\n')
 
+  def show(self):
+    # plot trajectory in space
+    plt.figure('3D trajectory')
+    ax = plt.axes(projection="3d", label="uniquelabel")
+    ax.plot(self.position_x, self.position_y, self.position_z, 'r', label="position")
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    ax.set_zlabel('z')
+    print('* figure 1:\033[33m 3d position\033[0m')
 
-if __name__ == "__main__":
+    # now plot all the others
+    chosen_size = (20, 7)
+    chosen_grid_linewidth = 0.3
+    chosen_grid_linestyle = '--'
+    chosen_grid_color = 'gray'
 
-  # parsing command line parameters
-  if len(sys.argv) != 3 or sys.argv[1] not in ("pdf", "show"):
-    print('\033[91mError:\033[0m ' + 'python plot.py <1> <2>')
-    print('  <1>: either "pdf" or "show"')
-    print('  <2>: absolute or relative path of the experiment file')
-    exit()
+    fig, axs = plt.subplots(3, 2, figsize=chosen_size)
+    plt.subplots_adjust(wspace=0.2, hspace=1)
 
-  command = sys.argv[1]
-  file_location = sys.argv[2]
-  experiment_name = file_location.split('/')[-1]
-  data_storage = Storage(file_location, experiment_name)
-  print('* read data with total length: \033[33m' + str(data_storage.trace_length) + '\033[0m')
+    axs[0, 0].title.set_text('Position (x)')
+    axs[0, 0].plot(self.time, self.setpoint_position_x, 'k')
+    axs[0, 0].plot(self.time, self.position_x, 'b')
+    axs[0, 0].plot(self.time, self.estimated_position_x, 'b:')
+    axs[0, 0].legend(['setpoint', 'position', 'estimated position'])
+    axs[0, 0].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
 
-  if command == "pdf":
+    axs[1, 0].title.set_text('Position (y)')
+    axs[1, 0].plot(self.time, self.setpoint_position_y, 'k')
+    axs[1, 0].plot(self.time, self.position_y, 'g')
+    axs[1, 0].plot(self.time, self.estimated_position_y, 'g:')
+    axs[1, 0].legend(['setpoint', 'position', 'estimated position'])
+    axs[1, 0].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
 
+    axs[2, 0].title.set_text('Position (z)')
+    axs[2, 0].plot(self.time, self.setpoint_position_z, 'k')
+    axs[2, 0].plot(self.time, self.position_z, 'r')
+    axs[2, 0].plot(self.time, self.estimated_position_z, 'r:')
+    axs[2, 0].legend(['setpoint', 'position', 'estimated position'])
+    axs[2, 0].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
+
+    axs[0, 1].title.set_text('Velocity (x)')
+    axs[0, 1].plot(self.time, self.velocity_x, 'b')
+    axs[0, 1].plot(self.time, self.estimated_velocity_x, 'b:')
+    axs[0, 1].legend(['velocity', 'estimated velocity'])
+    axs[0, 1].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
+
+    axs[1, 1].title.set_text('Velocity (y)')
+    axs[1, 1].plot(self.time, self.velocity_y, 'g')
+    axs[1, 1].plot(self.time, self.estimated_velocity_y, 'g:')
+    axs[1, 1].legend(['velocity', 'estimated velocity'])
+    axs[1, 1].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
+
+    axs[2, 1].title.set_text('Velocity (z)')
+    axs[2, 1].plot(self.time, self.velocity_z, 'r')
+    axs[2, 1].plot(self.time, self.estimated_velocity_z, 'r:')
+    axs[2, 1].legend(['velocity', 'estimated velocity'])
+    axs[2, 1].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
+    print('* figure 2:\033[33m position and velocity (x,y,z)\033[0m')
+
+    fig, axs = plt.subplots(3, 2, figsize=chosen_size)
+    plt.subplots_adjust(wspace=0.2, hspace=1)
+
+    axs[0, 0].title.set_text('Acceleration (x,y,z)')
+    axs[0, 0].plot(self.time, self.acceleration_x, 'b')
+    axs[0, 0].plot(self.time, self.acceleration_y, 'g')
+    axs[0, 0].plot(self.time, self.acceleration_z, 'r')
+    axs[0, 0].legend(['x', 'y', 'z'])
+    axs[0, 0].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
+
+    axs[0, 1].title.set_text('Attitude (x,y,z)')
+    axs[0, 1].plot(self.time, self.attitude_x, 'b')
+    axs[0, 1].plot(self.time, self.attitude_y, 'g')
+    axs[0, 1].plot(self.time, self.attitude_z, 'r')
+    axs[0, 1].legend(['x', 'y', 'z'])
+    axs[0, 1].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
+
+    axs[1, 0].title.set_text('Gyro (x,y,z)')
+    axs[1, 0].plot(self.time, self.gyro_x, 'b')
+    axs[1, 0].plot(self.time, self.gyro_y, 'g')
+    axs[1, 0].plot(self.time, self.gyro_z, 'r')
+    axs[1, 0].legend(['x', 'y', 'z'])
+    axs[1, 0].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
+
+    axs[1, 1].title.set_text('z-range')
+    axs[1, 1].plot(self.time, self.range_z, 'r')
+    axs[1, 1].legend(['z'])
+    axs[1, 1].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
+
+    axs[2, 0].title.set_text('Pixel count (x,y)')
+    axs[2, 0].plot(self.time, self.pixel_count_x, 'b')
+    axs[2, 0].plot(self.time, self.pixel_count_y, 'g')
+    axs[2, 0].legend(['x', 'y'])
+    axs[2, 0].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
+
+    axs[2, 1].title.set_text('Kalman errors (x,y,z)')
+    axs[2, 1].plot(self.time, self.kalman_error_x, 'b')
+    axs[2, 1].plot(self.time, self.kalman_error_y, 'g')
+    axs[2, 1].plot(self.time, self.kalman_error_z, 'r')
+    axs[2, 1].legend(['x', 'y', 'z'])
+    axs[2, 1].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
+    print('* figure 3:\033[33m sensor data and Kalman errors\033[0m')
+
+    fig, axs = plt.subplots(2, 2, figsize=chosen_size)
+    plt.subplots_adjust(wspace=0.2, hspace=1)
+
+    axs[0, 0].title.set_text('Motor control signals (u1)')
+    axs[0, 0].plot(self.time, self.control_motor_1, 'k')
+    axs[0, 0].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
+
+    axs[0, 1].title.set_text('Motor control signals (u2)')
+    axs[0, 1].plot(self.time, self.control_motor_2, 'dimgray')
+    axs[0, 1].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
+
+    axs[1, 0].title.set_text('Motor control signals (u3)')
+    axs[1, 0].plot(self.time, self.control_motor_3, 'darkgray')
+    axs[1, 0].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
+
+    axs[1, 1].title.set_text('Motor control signals (u4)')
+    axs[1, 1].plot(self.time, self.control_motor_4, 'lightgray')
+    axs[1, 1].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
+    print('* figure 4:\033[33m motor control signals (u1,u2,u3,u4)\033[0m')
+
+    plt.show()
+
+  def pdf(self, experiment_name):
     # first save the data to an intermediate csv file
     intermediate_data_file = "data.csv"
     intermediate_latex_file = experiment_name + ".tex"
-    data_storage.save_csv(intermediate_data_file)
+    self.save_csv(intermediate_data_file)
     print('* saved data to intermediate file: \033[33m' + str(intermediate_data_file) + '\033[0m')
 
     # now do the plotting
-    data_storage.save_latex(intermediate_latex_file, intermediate_data_file)
+    self.save_latex(intermediate_latex_file, intermediate_data_file)
     print('* saved tex to intermediate file: \033[33m' + str(intermediate_latex_file) + '\033[0m')
 
     # you want to use lualatex because there could be a lot of data
@@ -276,127 +393,5 @@ if __name__ == "__main__":
       except OSError:
         pass
 
-  if command == "show":
 
-    # plot trajectory in space
-    plt.figure('3D trajectory')
-    ax = plt.axes(projection="3d", label="uniquelabel")
-    ax.plot(data_storage.position_x, data_storage.position_y, data_storage.position_z, 'r', label="position")
-    ax.set_xlabel('x')
-    ax.set_ylabel('y')
-    ax.set_zlabel('z')
-    print('* figure 1:\033[33m 3d position\033[0m')
 
-    # now plot all the others
-    chosen_size = (20, 7)
-    chosen_grid_linewidth = 0.3
-    chosen_grid_linestyle = '--'
-    chosen_grid_color = 'gray'
-
-    fig, axs = plt.subplots(3, 2, figsize=chosen_size)
-    plt.subplots_adjust(wspace=0.2, hspace=1)
-
-    axs[0, 0].title.set_text('Position (x)')
-    axs[0, 0].plot(data_storage.time, data_storage.setpoint_position_x, 'k')
-    axs[0, 0].plot(data_storage.time, data_storage.position_x, 'b')
-    axs[0, 0].plot(data_storage.time, data_storage.estimated_position_x, 'b:')
-    axs[0, 0].legend(['setpoint', 'position', 'estimated position'])
-    axs[0, 0].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
-
-    axs[1, 0].title.set_text('Position (y)')
-    axs[1, 0].plot(data_storage.time, data_storage.setpoint_position_y, 'k')
-    axs[1, 0].plot(data_storage.time, data_storage.position_y, 'g')
-    axs[1, 0].plot(data_storage.time, data_storage.estimated_position_y, 'g:')
-    axs[1, 0].legend(['setpoint', 'position', 'estimated position'])
-    axs[1, 0].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
-
-    axs[2, 0].title.set_text('Position (z)')
-    axs[2, 0].plot(data_storage.time, data_storage.setpoint_position_z, 'k')
-    axs[2, 0].plot(data_storage.time, data_storage.position_z, 'r')
-    axs[2, 0].plot(data_storage.time, data_storage.estimated_position_z, 'r:')
-    axs[2, 0].legend(['setpoint', 'position', 'estimated position'])
-    axs[2, 0].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
-
-    axs[0, 1].title.set_text('Velocity (x)')
-    axs[0, 1].plot(data_storage.time, data_storage.velocity_x, 'b')
-    axs[0, 1].plot(data_storage.time, data_storage.estimated_velocity_x, 'b:')
-    axs[0, 1].legend(['velocity', 'estimated velocity'])
-    axs[0, 1].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
-
-    axs[1, 1].title.set_text('Velocity (y)')
-    axs[1, 1].plot(data_storage.time, data_storage.velocity_y, 'g')
-    axs[1, 1].plot(data_storage.time, data_storage.estimated_velocity_y, 'g:')
-    axs[1, 1].legend(['velocity', 'estimated velocity'])
-    axs[1, 1].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
-
-    axs[2, 1].title.set_text('Velocity (z)')
-    axs[2, 1].plot(data_storage.time, data_storage.velocity_z, 'r')
-    axs[2, 1].plot(data_storage.time, data_storage.estimated_velocity_z, 'r:')
-    axs[2, 1].legend(['velocity', 'estimated velocity'])
-    axs[2, 1].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
-    print('* figure 2:\033[33m position and velocity (x,y,z)\033[0m')
-
-    fig, axs = plt.subplots(3, 2, figsize=chosen_size)
-    plt.subplots_adjust(wspace=0.2, hspace=1)
-
-    axs[0, 0].title.set_text('Acceleration (x,y,z)')
-    axs[0, 0].plot(data_storage.time, data_storage.acceleration_x, 'b')
-    axs[0, 0].plot(data_storage.time, data_storage.acceleration_y, 'g')
-    axs[0, 0].plot(data_storage.time, data_storage.acceleration_z, 'r')
-    axs[0, 0].legend(['x', 'y', 'z'])
-    axs[0, 0].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
-
-    axs[0, 1].title.set_text('Attitude (x,y,z)')
-    axs[0, 1].plot(data_storage.time, data_storage.attitude_x, 'b')
-    axs[0, 1].plot(data_storage.time, data_storage.attitude_y, 'g')
-    axs[0, 1].plot(data_storage.time, data_storage.attitude_z, 'r')
-    axs[0, 1].legend(['x', 'y', 'z'])
-    axs[0, 1].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
-
-    axs[1, 0].title.set_text('Gyro (x,y,z)')
-    axs[1, 0].plot(data_storage.time, data_storage.gyro_x, 'b')
-    axs[1, 0].plot(data_storage.time, data_storage.gyro_y, 'g')
-    axs[1, 0].plot(data_storage.time, data_storage.gyro_z, 'r')
-    axs[1, 0].legend(['x', 'y', 'z'])
-    axs[1, 0].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
-
-    axs[1, 1].title.set_text('z-range')
-    axs[1, 1].plot(data_storage.time, data_storage.range_z, 'r')
-    axs[1, 1].legend(['z'])
-    axs[1, 1].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
-
-    axs[2, 0].title.set_text('Pixel count (x,y)')
-    axs[2, 0].plot(data_storage.time, data_storage.pixel_count_x, 'b')
-    axs[2, 0].plot(data_storage.time, data_storage.pixel_count_y, 'g')
-    axs[2, 0].legend(['x', 'y'])
-    axs[2, 0].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
-
-    axs[2, 1].title.set_text('Kalman errors (x,y,z)')
-    axs[2, 1].plot(data_storage.time, data_storage.kalman_error_x, 'b')
-    axs[2, 1].plot(data_storage.time, data_storage.kalman_error_y, 'g')
-    axs[2, 1].plot(data_storage.time, data_storage.kalman_error_z, 'r')
-    axs[2, 1].legend(['x', 'y', 'z'])
-    axs[2, 1].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
-    print('* figure 3:\033[33m sensor data and Kalman errors\033[0m')
-
-    fig, axs = plt.subplots(2, 2, figsize=chosen_size)
-    plt.subplots_adjust(wspace=0.2, hspace=1)
-
-    axs[0, 0].title.set_text('Motor control signals (u1)')
-    axs[0, 0].plot(data_storage.time, data_storage.control_motor_1, 'k')
-    axs[0, 0].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
-
-    axs[0, 1].title.set_text('Motor control signals (u2)')
-    axs[0, 1].plot(data_storage.time, data_storage.control_motor_2, 'dimgray')
-    axs[0, 1].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
-
-    axs[1, 0].title.set_text('Motor control signals (u3)')
-    axs[1, 0].plot(data_storage.time, data_storage.control_motor_3, 'darkgray')
-    axs[1, 0].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
-
-    axs[1, 1].title.set_text('Motor control signals (u4)')
-    axs[1, 1].plot(data_storage.time, data_storage.control_motor_4, 'lightgray')
-    axs[1, 1].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
-    print('* figure 4:\033[33m motor control signals (u1,u2,u3,u4)\033[0m')
-
-    plt.show()
