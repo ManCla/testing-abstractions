@@ -39,7 +39,6 @@ class cfEKF():
         self.expCoeff  = 2.92135
         # optical flow noise model
         self.flowStd   = 2 # used for both directions
-        self.err_fd  = np.array([0,0])#TMP
 
         # filter states
         self.x = np.zeros(9)     # estimated state: position, speed, attitude error
@@ -65,19 +64,15 @@ class cfEKF():
                            [-x[1], x[0],    0]])
         return mcross
 
-    # def exmpCross(self, x):
-    #     cross = self.cross(x)
-    #     return np.identity(3)+cross+np.matmul(cross,cross)/2
-
     def updateR(self):
         # computes rotation matrix from quaternion q
         qw = self.q[0]
         qx = self.q[1]
         qy = self.q[2]
         qz = self.q[3]
-        selfR = np.array([[qw**2+qx**2-qy**2-qz**2,         2*(qx*qy-qw*qz),         2*(qx*qz+qw*qy)],\
-                         [        2*(qx*qy+qw*qz), qw**2-qx**2+qy**2-qz**2,         2*(qy*qz-qw*qx)],\
-                         [        2*(qx*qz-qw*qy),         2*(qy*qz+qw*qx), qw**2-qx**2-qy**2+qz**2]])
+        self.R = np.array([[qw**2+qx**2-qy**2-qz**2,        2*(qx*qy-qw*qz),         2*(qx*qz+qw*qy)],\
+                          [         2*(qx*qy+qw*qz),qw**2-qx**2+qy**2-qz**2,         2*(qy*qz-qw*qx)],\
+                          [         2*(qx*qz-qw*qy),        2*(qy*qz+qw*qx),qw**2-qx**2-qy**2+qz**2]])
 
     def sanityCheckP(self):
         # saturate
@@ -96,9 +91,9 @@ class cfEKF():
 
     def quaternionToEuler(self, q):
         #utility function to translate quaternion in Euler angles for plotting
-        phi   = math.atan2(2*(q[0]*q[1] + q[2]*q[3]), 1-2*(q[1]**2+q[2]**2)) #q[0]**2 - q[1]**2 - q[2]**2 + q[3]**2)
+        phi   = math.atan2(2*(q[0]*q[1] + q[2]*q[3]), 1-2*(q[1]**2+q[2]**2))
         theta = math.asin(2*(q[0]*q[2] - q[3]*q[1]))
-        psi   = math.atan2(2*(q[0]*q[3] + q[1]*q[2]), 1-2*(q[2]**2+q[3]**2)) #q[0]**2 + q[1]**2 - q[2]**2 - q[3]**2)
+        psi   = math.atan2(2*(q[0]*q[3] + q[1]*q[2]), 1-2*(q[2]**2+q[3]**2))
         eta = np.array([phi, theta, psi])
         return eta
 
@@ -120,7 +115,6 @@ class cfEKF():
         A[6:9,6:9] = spl.expm(self.cross(-d))
 
         # covariance update according to system dynamics 
-        # process noise is added by addProcessNoise()
         AP = np.matmul(A,self.P)             # compute A*P
         self.P = np.matmul(AP,A.transpose()) # compute A*P*A'
 
@@ -129,7 +123,7 @@ class cfEKF():
         v   = self.x[3:6]*dt+acc*(dt2/2)
         self.x[0:3] = self.x[0:3]+self.R.dot(v)+np.array([0,0,-self.g*dt2/2])
         self.x[3:6] = self.x[3:6]+dt*(acc-(self.cross(gyro).dot(self.x[3:6]))-self.g*self.R[2,:])
-        angle  = np.linalg.norm(gyro*dt) # TODO: define quaternion function
+        angle  = np.linalg.norm(gyro*dt)
         ca     = np.cos(angle/2)
         sa     = np.sin(angle/2)
         if  angle==0:
@@ -142,17 +136,16 @@ class cfEKF():
 
     def addProcessNoise(self, dt):
         # update covariance matrix according to process-noise
-        self.P = self.P + np.diag(np.power([self.procNoiseAcc_xy*dt*dt + self.procNoiseVel*dt + self.procNoisePos, \
-                                            self.procNoiseAcc_xy*dt*dt + self.procNoiseVel*dt + self.procNoisePos, \
-                                            self.procNoiseAcc_z*dt*dt + self.procNoiseVel*dt + self.procNoisePos,   \
-                                            self.procNoiseAcc_xy*dt + self.procNoiseVel+self.velNoiseForSim_xy, \
-                                            self.procNoiseAcc_xy*dt + self.procNoiseVel+self.velNoiseForSim_xy, \
-                                            self.procNoiseAcc_z*dt + self.procNoiseVel,   \
-                                            self.measNoiseGyro_rollpitch * dt + self.procNoiseAtt, \
-                                            self.measNoiseGyro_rollpitch * dt + self.procNoiseAtt, \
-                                            self.measNoiseGyro_yaw * dt + self.procNoiseAtt       \
-                                            ],2))
-        self.sanityCheckP() # sanity check of covariance
+        self.P = self.P + np.diag(np.power([self.procNoiseAcc_xy*dt*dt + self.procNoiseVel*dt + self.procNoisePos,\
+                                            self.procNoiseAcc_xy*dt*dt + self.procNoiseVel*dt + self.procNoisePos,\
+                                            self.procNoiseAcc_z*dt*dt + self.procNoiseVel*dt + self.procNoisePos,\
+                                            self.procNoiseAcc_xy*dt + self.procNoiseVel+self.velNoiseForSim_xy,\
+                                            self.procNoiseAcc_xy*dt + self.procNoiseVel+self.velNoiseForSim_xy,\
+                                            self.procNoiseAcc_z*dt + self.procNoiseVel,\
+                                            self.measNoiseGyro_rollpitch * dt + self.procNoiseAtt,\
+                                            self.measNoiseGyro_rollpitch * dt + self.procNoiseAtt,\
+                                            self.measNoiseGyro_yaw * dt + self.procNoiseAtt ],2))
+        self.sanityCheckP()
 
     def scalarUpdate(self, error, H, std):
         # given the measurement Jacobian 'H' and the innovation 'error'
@@ -165,7 +158,7 @@ class cfEKF():
         IKH    = np.identity(9)-np.outer(K,H)  #
         IKHP   = np.matmul(IKH,self.P)
         self.P = np.matmul(IKHP,IKH.transpose())+np.outer(K,K)*R
-        self.sanityCheckP() # sanity check of covariance
+        self.sanityCheckP()
 
     def correctionZranging(self, meas):
         # update estimate with Z laser ranging data
@@ -200,7 +193,7 @@ class cfEKF():
 
     def finalize(self):
         # update quaternion according to quaternion error (from kalman state)
-        angle  = np.linalg.norm(self.x[6:9]) # TODO: define quaternion function
+        angle  = np.linalg.norm(self.x[6:9])
         ca     = np.cos(angle/2)
         sa     = np.sin(angle/2)
         if  angle==0:
@@ -219,7 +212,7 @@ class cfEKF():
         A[6:9,6:9] = spl.expm(self.cross(-d))
         AP = np.matmul(A,self.P)             # compute A*P
         self.P = np.matmul(AP,A.transpose()) # compute A*P*A'
-        self.sanityCheckP() # sanity check of covariance
+        self.sanityCheckP()
 
         self.updateR()
         self.x[6:9] = np.zeros(3) # reset attitude error
@@ -228,8 +221,6 @@ class cfEKF():
         self.stateExternal[0:3] = self.x[0:3] # position
         self.stateExternal[3:6] = self.R.dot(self.x[3:6]) # speed in world frame
         self.stateExternal[6:9] = self.quaternionToEuler(self.q)
-        # no point in externalizing gyroscope data since they are already available there
-
 
     def runEKF(self, acc, gyro, pxCount, zrange):
         # main function called by main loop that takes care 
