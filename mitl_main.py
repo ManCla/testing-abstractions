@@ -12,7 +12,7 @@ if __name__ == "__main__":
 
 	# initialization of  objects
 	physics = cfSim()
-	reference = "step" # available: step, sinus, circle
+	reference = "step"
 	ctrl = cfCtrl(reference, physics.config, physics.b,\
 	              physics.I, physics.m, physics.g,\
 	              physics.k, physics.l)
