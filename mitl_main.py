@@ -70,7 +70,7 @@ if __name__ == "__main__":
 		# store measurements
 		acc[:,i]  = physics.readAcc(noise)
 		gyro[:,i] = physics.readGyro(noise)
-		pxCount[:,i] = physics.readPixelcount(noise, Quantisation=quantisation)
+		pxCount[:,i] = physics.readPixelcount(noise, quantisation)
 		zrange[i] = physics.readZRanging(noise)
 		# close loop 
 		x_est[:,i], err_fd[:,i]  = est.runEKF(acc[:,i],gyro[:,i],pxCount[:,i],zrange[i])
