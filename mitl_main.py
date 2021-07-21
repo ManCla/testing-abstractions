@@ -23,7 +23,8 @@ if __name__ == "__main__":
 	t_final = 10
 	t_resolution = 0.001
 	noise  = 0 # if non-zero includes measurement noise with given gain
-	useKalmanFilter = True # if true the KF is used for feedback
+	useKalmanFilter = True  # if true the KF is used for feedback
+	quantisation    = False # if false removes quantisation from flow data
 	t_curr = t_init
 	n_steps = int((t_final-t_init)/t_resolution)
 
@@ -69,7 +70,7 @@ if __name__ == "__main__":
 		# store measurements
 		acc[:,i]  = physics.readAcc(noise)
 		gyro[:,i] = physics.readGyro(noise)
-		pxCount[:,i] = physics.readPixelcount(noise)
+		pxCount[:,i] = physics.readPixelcount(noise, Quantisation=quantisation)
 		zrange[i] = physics.readZRanging(noise)
 		# close loop 
 		x_est[:,i], err_fd[:,i]  = est.runEKF(acc[:,i],gyro[:,i],pxCount[:,i],zrange[i])

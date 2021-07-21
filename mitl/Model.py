@@ -293,7 +293,7 @@ class cfSim():
 					return ret
 			return self.x[2]/np.cos(angle)
 
-	def readPixelcount(self, Noise=0):
+	def readPixelcount(self, Noise=0, Quantisation=True):
 		# function implementing the optical flow measure
 		# it returns the pixelcount in the x and y direction
 		# parameters
@@ -313,4 +313,7 @@ class cfSim():
 		if Noise :
 			dnx = dnx + Noise * rnd.normalvariate(0,self.flowNoiseVar[0])
 			dny = dny + Noise * rnd.normalvariate(0,self.flowNoiseVar[1])
-		return np.array([int(np.rint(dnx)), int(np.rint(dny))])
+		if Quantisation:
+			return np.array([int(np.rint(dnx)), int(np.rint(dny))])
+		else:
+			return np.array([dnx, dny])
