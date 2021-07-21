@@ -1,10 +1,3 @@
 **/.DS_Store
 **/__pycache__
 
-# don't include any pdf file
-**.pdf
-
-# don't include test data
-mitl/flightdata
-sitl/flightdata
-hitl/flightdata
