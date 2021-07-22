@@ -27,22 +27,22 @@ Everything tested with: MacOS 11.1
 ## Get the correct version of the Crazyflie firmware
 Clone the crazyflie-firmware repository with
 
->> git clone git@github.com:bitcraze/crazyflie-firmware.git
+> git clone git@github.com:bitcraze/crazyflie-firmware.git
 
 For reproducibility all the experiments in the paper were performed with the version of the firmware at commit (https://github.com/bitcraze/crazyflie-firmware/commit/23e9b80caa9137d2953ae6dce57507fda1b05a8c).
 Hence after cloning it is important to checkout to this commit with
 
->> git checkout 23e9b80
+> git checkout 23e9b80
 
 ## How to plot test results 
 
 Detailed instructions are provided in the plot directory but to just display the results associated to 
 
->> python plot_main.py show path/to/flight/data
+> python plot_main.py show path/to/flight/data
 
 ## run mitl
 
->> python mitl_main.py
+> python mitl_main.py
 
 ## run sitl
 
