@@ -2,14 +2,14 @@
 
 Repository associated to the paper PAPER TITLE HERE. 
 
-## repository structure:
+## Repository Structure:
 
- * *mitl*: directory associated to the Model-In-The-Loop testing level
- * *sitl*: directory associated to the Software-In-The-Loop testing level
- * *hitl*: directory associated to the Hardware-In-The-Loop testing level
- * *pitl*: directory associated to the Process-In-The-Loop testing level
- * *plot*: directory containing the plotting class
- * *bugs*: directory containing the patch files that inject the bugs discussed in the paper
+ * **mitl**: directory associated to the Model-In-The-Loop testing level
+ * **sitl**: directory associated to the Software-In-The-Loop testing level
+ * **hitl**: directory associated to the Hardware-In-The-Loop testing level
+ * **pitl**: directory associated to the Process-In-The-Loop testing level
+ * **plot**: directory containing the plotting class
+ * **bugs**: directory containing the patch files that inject the bugs discussed in the paper
 
 Each testing level folder contains:
 
@@ -24,7 +24,7 @@ Python 3, openOCD, renode
 
 Everything tested with: MacOS 11.1
 
-## Get the correct version of the Crazyflie firmware
+## Get the Crazyflie Firmware 
 Clone the [crazyflie-firmware](https://github.com/bitcraze/crazyflie-firmware) repository with
 
 > git clone git@github.com:bitcraze/crazyflie-firmware.git
@@ -34,18 +34,20 @@ Hence after cloning it is important to checkout to this commit with
 
 > git checkout 23e9b80
 
-## How to plot test results 
+## How to Plot Test Results 
 
 Detailed instructions are provided in the plot directory but to just display the results associated to 
 
 > python plot_main.py show path/to/flight/data
 
-## run mitl
+## Running the tests
+
+### Run mitl
 
 > python mitl_main.py
 
-## run sitl
+### Run sitl
 
-## run hitl
+### Run hitl
 
-## run pitl
+### Run pitl
