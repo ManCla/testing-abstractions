@@ -75,25 +75,25 @@ class cfSITL(telnetlib.Telnet):
         # or filename and line for breakpoint addresses
         # TODO: retrieve automatically the addresses form map file
 
-        motor_ratios_dummy = 0xa08c
-        range_last = 0x10ca2
-        currentMotion = 0x11314
-        start = 0x8f7c
-        ready = 0x8f04
-        gyroBiasFound = 0x97d8
-        stateCompressed = 0xce6c
-        setpointCompressed = 0xce04
-        xTickCount = 0x17c0
-        error_flowx = 0xd4bc
-        error_flowy = 0xd4be
-        error_tof = 0xd4d0
-        state = 0xd2f0
+        motor_ratios = 0x2000a190
+        range_last = 0x2000fbbe
+        currentMotion = 0x20010234
+        start = 0x20009094
+        ready = 0x2000901c
+        gyroBiasFound = 0x200098f0
+        stateCompressed = 0x2000cdcc
+        setpointCompressed = 0x2000cd64
+        xTickCount = 0x20001930
+        error_flowx = 0x2000d41c
+        error_flowy = 0x2000d41e
+        error_tof = 0x2000d430
+        state = 0x2000cd78
 
         # motors from "power_distribution_stock.c"
-        self.add_mem_addr("motor_ratios_dummy_m1", "0x{:x}".format(motor_ratios_dummy))
-        #self.add_mem_addr("motor_ratios_dummy_m2", "0x{:x}".format(motor_ratios_dummy+0x4))
-        #self.add_mem_addr("motor_ratios_dummy_m3", "0x{:x}".format(motor_ratios_dummy+0x8))
-        #self.add_mem_addr("motor_ratios_dummy_m4", "0x{:x}".format(motor_ratios_dummy+0xc))
+        self.add_mem_addr("motor_ratios_m1", "0x{:x}".format(motor_ratios))
+        #self.add_mem_addr("motor_ratios_m2", "0x{:x}".format(motor_ratios+0x4))
+        #self.add_mem_addr("motor_ratios_m3", "0x{:x}".format(motor_ratios+0x8))
+        #self.add_mem_addr("motor_ratios_m4", "0x{:x}".format(motor_ratios+0xc))
         # zranger from "zranger2.c"
         self.add_mem_addr("range_last", "0x{:x}".format(range_last))
 
@@ -223,7 +223,7 @@ class cfSITL(telnetlib.Telnet):
         # Function that reads all of the motor values and returns them
         # Reads a string of the form "0x00, 0x01, 0x02,". The motor power are the two least significant
         #  bytes of a 32 bit value. Note little endianness
-        mP = [byte.strip() for byte in self.read_mem(self._addr_book['motor_ratios_dummy_m1'], 0x10).split(',')]
+        mP = [byte.strip() for byte in self.read_mem(self._addr_book['motor_ratios_m1'], 0x10).split(',')]
         return [int(msb+lsb.removeprefix('0x'),16) for lsb,msb in zip(mP[0::4], mP[1::4])]
 
     def startReady(self):

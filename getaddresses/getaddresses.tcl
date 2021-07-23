@@ -1,4 +1,4 @@
-set mapfile [open ../examples/demos/app_sitl/cf2.map r]
+set mapfile [open ../firmware/cf2.map r]
 set map [read $mapfile]
 set resultfile [open addresses.txt w]
 set desiredfile [open desired.txt r]

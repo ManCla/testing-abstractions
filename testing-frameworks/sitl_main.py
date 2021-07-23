@@ -2,13 +2,13 @@
 import sys
 # for testing
 import numpy as np
-from physicalModeling.Model import cfSim
-import cfsitl 
+from mitl.Model  import cfSim
+from sitl.cfSitl import cfSITL
 
 # import class for storing
-from plot import Storage 
+from plot.Plot   import Storage 
 
-# for pacing of test
+# for measuring test duration
 import time
 
 if __name__ == "__main__":
@@ -18,13 +18,13 @@ if __name__ == "__main__":
     start_test = time.perf_counter()
     # simulation parameters
     t_init  = 0
-    t_final = 1.2
+    t_final = 1
     t_resolution = 0.001
     t_curr = t_init
     n_steps = int((t_final-t_init)/t_resolution)
 
-    physics = cfSim()           # initialize physics simulator
-    cyber   = cfsitl.cfSITL(port)   # connect to hardware
+    physics = cfSim()      # initialize physics simulator
+    cyber   = cfSITL(port) # connect to hardware
 
     # storage variables
     t       = np.zeros((n_steps))
