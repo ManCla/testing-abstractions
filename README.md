@@ -48,6 +48,15 @@ Detailed instructions are provided in the plot directory but to just display the
 
 ### Run sitl
 
+Compile firmware with dedicated autonomous sequence
+
+Get memory addresses and update cfSitl file
+
+Update .resc file in renode to point to the app elf file
+
+From the renode folder, run 'mono output/bin/Release/Renode.exe --disable-xwt --port 4444'
+From another shell, go to sitl-test/environment in the Crazyflie firmware and run 'python main_sitl.py'
+
 ### Run hitl
 
 ### Run pitl
