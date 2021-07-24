@@ -18,7 +18,7 @@ if __name__ == "__main__":
     start_test = time.perf_counter()
     # simulation parameters
     t_init  = 0
-    t_final = 1
+    t_final = 10
     t_resolution = 0.001
     t_curr = t_init
     n_steps = int((t_final-t_init)/t_resolution)
@@ -74,8 +74,8 @@ if __name__ == "__main__":
             u_store[:,i] = cyber.motors()     # read motor values and store control action
             x_store[:,i] = physics.simulate(t_curr, u_store[:,i]) # simulate physics
 
-            if not i%10:
-                print(i)
+            # if not i%10:
+            #     print(i)
                 # Can modify the hover application to wait for the start variable to be set instead of waiting 10 ms.
                 #cyber.startFlying()
 
@@ -138,6 +138,6 @@ if __name__ == "__main__":
     storeObj.est_vel = est_vel
 
     # define filename as day and time and save
-    storeObj.save()
+    storeObj.save("sitl/flightdata")
 
 
