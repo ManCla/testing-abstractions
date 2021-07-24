@@ -75,19 +75,19 @@ class cfSITL(telnetlib.Telnet):
         # or filename and line for breakpoint addresses
         # TODO: retrieve automatically the addresses form map file
 
-        motor_ratios = 0x2000a190
-        range_last = 0x2000fbbe
-        currentMotion = 0x20010234
-        start = 0x20009094
-        ready = 0x2000901c
-        gyroBiasFound = 0x200098f0
-        stateCompressed = 0x2000cdcc
-        setpointCompressed = 0x2000cd64
-        xTickCount = 0x20001930
-        error_flowx = 0x2000d41c
-        error_flowy = 0x2000d41e
-        error_tof = 0x2000d430
-        state = 0x2000cd78
+        motor_ratios = 0xa074
+        range_last = 0x10c8a
+        currentMotion = 0x112fc
+        start = 0x8f7c
+        ready = 0x8f04
+        gyroBiasFound = 0x97d0
+        stateCompressed = 0xce54
+        setpointCompressed = 0xcdec
+        xTickCount = 0x17c0
+        error_flowx = 0xd4a4
+        error_flowy = 0xd4a6
+        error_tof = 0xd4b8
+        state = 0xce00
 
         # motors from "power_distribution_stock.c"
         self.add_mem_addr("motor_ratios_m1", "0x{:x}".format(motor_ratios))
@@ -316,13 +316,13 @@ class cfSITL(telnetlib.Telnet):
 
     def write_acc(self, acc):
         # Function to write accelerometer measurements
-        cmd = "sysbus.i2c3.bmi_accel FeedAccSample {} {} {}\r".format(self.accelTomg(acc[0]), self.accelTomg(acc[1]), self.accelTomg(acc[2]))
+        cmd = "sysbus.i2c3.bmi_accel FeedAccSample {:f} {:f} {:f}\r".format(self.accelTomg(acc[0]), self.accelTomg(acc[1]), self.accelTomg(acc[2]))
         super().write(cmd.encode())
         super().read_until(b"(CF2.1)")
 
     def write_gyro(self, gyro):
         # Functin to write gyroscope measurements
-        cmd = "sysbus.i2c3.bmi_gyro FeedGyroSample {} {} {}\r".format(self.gyroToDeg(gyro[0]), self.gyroToDeg(gyro[1]), self.gyroToDeg(gyro[2]))
+        cmd = "sysbus.i2c3.bmi_gyro FeedGyroSample {:f} {:f} {:f}\r".format(self.gyroToDeg(gyro[0]), self.gyroToDeg(gyro[1]), self.gyroToDeg(gyro[2]))
         super().write(cmd.encode())
         super().read_until(b"(CF2.1)")
         cmd = "sysbus.i2c3.bmi_gyro TriggerDataInterrupt\r"
@@ -355,8 +355,8 @@ class cfSITL(telnetlib.Telnet):
 
         zmm = int(zm*1000) # convert to millimeters
 
-        super().write("sysbus.i2c3.bmi_accel FeedAccSample {} {} {};\
-                sysbus.i2c3.bmi_gyro FeedGyroSample {} {} {};\
+        super().write("sysbus.i2c3.bmi_accel FeedAccSample {:f} {:f} {:f};\
+                sysbus.i2c3.bmi_gyro FeedGyroSample {:f} {:f} {:f};\
                 sysbus.i2c3.bmi_gyro TriggerDataInterrupt;\
                 sysbus.sram WriteDoubleWord {} {};\
                 sysbus.sram WriteWord {} {}\r".format(\
@@ -366,7 +366,7 @@ class cfSITL(telnetlib.Telnet):
                 self._addr_book['range_last'], zmm).encode())
         super().read_until(b"(CF2.1)")
 
-    def write_read(self, acc, gyro, dpx, zm:float, time:str):
+    def write_read(self, acc, gyro, dpx, zm:float, duration:str):
         mdpxx = self.int16ToC2(-dpx[0])
         mdpxy = self.int16ToC2(-dpx[1])
         Delta = (mdpxx<<16)+mdpxy
@@ -375,8 +375,9 @@ class cfSITL(telnetlib.Telnet):
         #TODO: The communication with Renode may fail. The try/catch block is meant to be a failsafe, uncomment (and fix indentation because Python) to enable. Is there a better way?
         #for _ in range(10):
         #    try:
-        super().write("sysbus.i2c3.bmi_accel FeedAccSample {} {} {};\
-                sysbus.i2c3.bmi_gyro FeedGyroSample {} {} {};\
+            #super().write("sysbus.i2c3.bmi_accel FeedAccSample {:f} {:f} {:f};\
+        cmd = "sysbus.i2c3.bmi_accel FeedAccSample {:f} {:f} {:f};\
+                sysbus.i2c3.bmi_gyro FeedGyroSample {:f} {:f} {:f};\
                 sysbus.i2c3.bmi_gyro TriggerDataInterrupt;\
                 sysbus.sram WriteDoubleWord {} {};\
                 sysbus.sram WriteWord {} {};\
@@ -397,7 +398,9 @@ class cfSITL(telnetlib.Telnet):
                 self._addr_book["error_tof"],\
                 self._addr_book["error_flowx"],\
                 self._addr_book["error_flowy"],\
-                time).encode())
+                duration)
+                #duration).encode())
+        super().write(cmd.encode())
         read = super().read_until(b"(CF2.1)")
         read = [byte.strip(b",") for byte in ((read.partition(b"\n\r"))[2].rpartition(b"\x1b"))[0].split()] # TODO Better way to do it?
         estp = [self.c2ToInt16(int(msb+lsb.removeprefix(b'0x'),16))/1000 for lsb,msb in zip(read[1:7:2], read[2:7:2])]
@@ -405,10 +408,13 @@ class cfSITL(telnetlib.Telnet):
         setp = [self.c2ToInt16(int(msb+lsb.removeprefix(b'0x'),16))/1000 for lsb,msb in zip(read[17:23:2], read[18:23:2])]
         eflw = [self.c2ToInt16(int(word,16))/1000 for word in read[24:27]]
         return (estp,estv,setp,eflw)
-        #    except ValueError:
-        #        pass
-        #    else:
-        #        raise Exception
+            #except ValueError:
+            #    print("There was a ValueError in read_write! Command sent was: ")
+            #    print(cmd)
+            #    time.sleep(0.1)
+            #    pass
+            #else:
+            #    raise Exception
 
     def idle(self):
         super().write(b"sysbus.i2c3.bmi_gyro TriggerDataInterrupt; emulation RunFor \"0:0:0.001\"\r")
