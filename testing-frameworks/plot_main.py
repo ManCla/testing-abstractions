@@ -1,5 +1,5 @@
 import sys
-from plot.plot import Storage
+from plot.Plot import Storage
 
 if __name__ == "__main__":
 
