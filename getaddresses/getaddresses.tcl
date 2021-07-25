@@ -14,8 +14,7 @@ foreach {var obj} $desired {
 close $mapfile
 close $resultfile
 set template [open "cfSitlTemplate.py" r]
-set sitl [open "new.py" w]
-#set sitl [open "../testing-frameworks/sitl/cfSitl.py" w]
+set sitl [open "../testing-frameworks/sitl/cfSitl.py" w]
 puts $sitl [regsub {#REPLACED-BY-ADDRESSES} [read $template] $addresslist]
 close $template
 close $sitl
