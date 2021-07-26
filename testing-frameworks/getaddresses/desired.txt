@@ -1,4 +1,7 @@
+sensorsTask        sensors_bmi088_bmp388
 motor_ratios       motors
+accelRaw           sensors_bmi088_bmp388
+gyroRaw            sensors_bmi088_bmp388
 range_last         zranger2
 currentMotion      flowdeck_v1v2
 start              hover_sitl

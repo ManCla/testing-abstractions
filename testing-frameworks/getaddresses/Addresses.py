@@ -26,10 +26,18 @@ class cfAddresses():
             #handle addresses next to each other and then single ones (else branch)
             #this leverages that dictionary uses same names as firmware
             if (line[0]=="motor_ratios"):
-                self.addresses["motor_ratios_m1"] = "0x{:x}".format(int(line[2],16))
-                #self.addresses["motor_ratios_m2"] = "0x{:x}".format(motor_ratios+0x4)
-                #self.addresses["motor_ratios_m3"] = "0x{:x}".format(motor_ratios+0x8)
-                #self.addresses["motor_ratios_m4"] = "0x{:x}".format(motor_ratios+0xc)
+                self.addresses["motor_ratios_m1"] = "0x{:x}".format(int(line[2],16)+0x0)
+                self.addresses["motor_ratios_m2"] = "0x{:x}".format(int(line[2],16)+0x4)
+                self.addresses["motor_ratios_m3"] = "0x{:x}".format(int(line[2],16)+0x8)
+                self.addresses["motor_ratios_m4"] = "0x{:x}".format(int(line[2],16)+0xc)
+            elif (line[0]=="accelRaw"):
+                self.addresses["accelRaw_x"] = "0x{:x}".format(int(line[2],16)+0x0)
+                self.addresses["accelRaw_y"] = "0x{:x}".format(int(line[2],16)+0x2)
+                self.addresses["accelRaw_z"] = "0x{:x}".format(int(line[2],16)+0x4)
+            elif (line[0]=="gyroRaw"):
+                self.addresses["gyroRaw_x"] = "0x{:x}".format(int(line[2],16)+0x0)
+                self.addresses["gyroRaw_y"] = "0x{:x}".format(int(line[2],16)+0x2)
+                self.addresses["gyroRaw_z"] = "0x{:x}".format(int(line[2],16)+0x4)
             elif (line[0]=="currentMotion"):
                 # In motionBurst_t, bytes 2-3 are for deltaX and 4-5 for deltaY
                 #TODO rename
@@ -49,6 +57,12 @@ class cfAddresses():
                 self.addresses["setpointCompressed_x"] = "0x{:x}".format(int(line[2],16)+0x0)
                 self.addresses["setpointCompressed_y"] = "0x{:x}".format(int(line[2],16)+0x2)
                 self.addresses["setpointCompressed_z"] = "0x{:x}".format(int(line[2],16)+0x4)
+            elif (line[0]=="sensorsTask"):
+                # we want the breakpoint right after the start of the sensors task
+                # the shift of 24 addresses is empirically obtained. If the breakpoint 
+                # is never hit, set this address manually, for example with the address 
+                # of "b sensors_bmi088_bmp388.c:320" when using gdb
+                self.addresses["sensorsTask"] = "0x{:x}".format(int(line[2],16)+0x24)
             else :
                 self.addresses[line[0]] = "0x{:x}".format(int(line[2],16))
         
