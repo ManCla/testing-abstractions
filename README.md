@@ -48,7 +48,7 @@ Detailed instructions are provided in the plot directory but to just display the
 
 ### Run sitl
 
-Compile firmware with dedicated autonomous sequence
+Compile firmware with dedicated autonomous sequence and macro definition
 
 Get memory addresses and update cfSitl file
 
@@ -59,4 +59,12 @@ From another shell, go to sitl-test/environment in the Crazyflie firmware and ru
 
 ### Run hitl
 
+Compile firmware with dedicated autonomous sequence and macro definition
+
+start openocd from crazyflie-firmware repo
+
+start python hitl_main
+
 ### Run pitl
+
+
