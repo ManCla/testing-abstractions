@@ -4,6 +4,7 @@ import sys
 import numpy as np
 from mitl.Model  import cfSim
 from sitl.cfSitl import cfSITL
+from getaddresses.Addresses import cfAddresses
 
 # import class for storing
 from plot.Plot   import Storage 
@@ -15,6 +16,7 @@ if __name__ == "__main__":
     port = 4444
     if len(sys.argv) > 1 :
         port = sys.argv[1]
+    addresses = cfAddresses()
     start_test = time.perf_counter()
     # simulation parameters
     t_init  = 0
@@ -24,7 +26,7 @@ if __name__ == "__main__":
     n_steps = int((t_final-t_init)/t_resolution)
 
     physics = cfSim()      # initialize physics simulator
-    cyber   = cfSITL(port) # connect to hardware
+    cyber   = cfSITL(addresses.get(), port) # connect to hardware
 
     # storage variables
     t       = np.zeros((n_steps))

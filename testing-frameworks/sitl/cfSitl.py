@@ -13,7 +13,7 @@ from struct import pack, unpack
 
 class cfSITL(telnetlib.Telnet):
 
-    def __init__(self, port):
+    def __init__(self, addresses, port):
         # Init Function: it established communication with openocd and initializes
         # the needed variables.
         super().__init__("localhost", port, 10) # init telnet comm
@@ -25,8 +25,7 @@ class cfSITL(telnetlib.Telnet):
         super().write(b"\r")
         super().read_until(b"(monitor)", 1)
 
-        self._addr_book = dict()            # init dictionary memory addresses
-        self.initialize_registers()         # get memory addresses of interest
+        self._addr_book = addresses # dictionary of addresses is provided
 
         # arificial gyro bias: has to be the same as the one injected in the firmware
         # has to be an integer (despite this is not needed in the firmware) because
@@ -45,7 +44,7 @@ class cfSITL(telnetlib.Telnet):
 
     def pass_startup(self):
         print("Writing to pass startup self tests...")
-        super().write(b"emulation RunFor \"0:0:0.9\"\r")
+        super().write(b"emulation RunFor \"0:0:1.9\"\r")
         super().read_until(b"(CF2.1)")
         rdy = self.startReady()
         print(rdy)
@@ -67,83 +66,6 @@ class cfSITL(telnetlib.Telnet):
     #        super().write(b"sysbus.i2c3.bmi_gyro TriggerDataInterrupt;emulation RunFor \"0:0:0.001\"\r")
     #        super().read_until(b"(CF2.1)")
     #    print("Initial transient should be handled!")
-            
-    def initialize_registers(self):
-        # Function to set the registers of the memory addresses of itnerest
-        # convention is to have a dictionary with field names that are the same as the 
-        # names of the variables in the firmware 
-        # or filename and line for breakpoint addresses
-        # TODO: retrieve automatically the addresses form map file
-
-        motor_ratios = 0xa074
-        range_last = 0x10c8a
-        currentMotion = 0x112fc
-        start = 0x8f7c
-        ready = 0x8f04
-        gyroBiasFound = 0x97d0
-        stateCompressed = 0xce54
-        setpointCompressed = 0xcdec
-        xTickCount = 0x17c0
-        error_flowx = 0xd4a4
-        error_flowy = 0xd4a6
-        error_tof = 0xd4b8
-        state = 0xce00
-
-        # motors from "power_distribution_stock.c"
-        self.add_mem_addr("motor_ratios_m1", "0x{:x}".format(motor_ratios))
-        #self.add_mem_addr("motor_ratios_m2", "0x{:x}".format(motor_ratios+0x4))
-        #self.add_mem_addr("motor_ratios_m3", "0x{:x}".format(motor_ratios+0x8))
-        #self.add_mem_addr("motor_ratios_m4", "0x{:x}".format(motor_ratios+0xc))
-        # zranger from "zranger2.c"
-        self.add_mem_addr("range_last", "0x{:x}".format(range_last))
-
-        # optical flow data
-        # In motionBurst_t, bytes 2-3 are for deltaX and 4-5 for deltaY
-        #TODO rename
-        self.add_mem_addr("accpx", "0x{:x}".format(currentMotion+0x2))
-        self.add_mem_addr("accpy", "0x{:x}".format(currentMotion+0x4))
-
-        ## FreeRTOS millisecond tick counter for checking progress of time
-        self.add_mem_addr("xTickCount","0x{:x}".format(xTickCount))
-
-        ## address of start variable in hover_sitl.c script
-        self.add_mem_addr("start", "0x{:x}".format(start))
-        self.add_mem_addr("ready", "0x{:x}".format(ready))
-        ## Wait until the gyro is calibrated
-        self.add_mem_addr("gyroBiasFound", "0x{:x}".format(gyroBiasFound))
-
-        ## temporary debug addresses
-        ## position estimated by cf as integer
-        self.add_mem_addr("stateCompressed_x", "0x{:x}".format(stateCompressed+0x0))
-        self.add_mem_addr("stateCompressed_y", "0x{:x}".format(stateCompressed+0x2))
-        self.add_mem_addr("stateCompressed_z", "0x{:x}".format(stateCompressed+0x4))
-        self.add_mem_addr("stateCompressed_vx", "0x{:x}".format(stateCompressed+0x6))
-        self.add_mem_addr("stateCompressed_vy", "0x{:x}".format(stateCompressed+0x8))
-        self.add_mem_addr("stateCompressed_vz", "0x{:x}".format(stateCompressed+0xa))
-        self.add_mem_addr("stateCompressed_ax", "0x{:x}".format(stateCompressed+0xc))
-        self.add_mem_addr("stateCompressed_ay", "0x{:x}".format(stateCompressed+0xe))
-        self.add_mem_addr("stateCompressed_az", "0x{:x}".format(stateCompressed+0x10))
-
-        ## setpoint addresses 
-        self.add_mem_addr("setpointCompressed_x", "0x{:x}".format(setpointCompressed+0x0))
-        self.add_mem_addr("setpointCompressed_y", "0x{:x}".format(setpointCompressed+0x2))
-        self.add_mem_addr("setpointCompressed_z", "0x{:x}".format(setpointCompressed+0x4))
-
-        ## flowdeck kamlman errors
-        self.add_mem_addr("error_flowx", "0x{:x}".format(error_flowx))
-        self.add_mem_addr("error_flowy", "0x{:x}".format(error_flowy))
-        self.add_mem_addr("error_tof", "0x{:x}".format(error_tof))
-
-        ## state used by the stabilizer of type state_t
-        # attitude 0x00
-        # attitudeQuaternion 0x10
-        # position 0x24
-        # velocity 0x34
-        # acceleration 0x44
-        self.add_mem_addr("state_z",  "0x{:x}".format(state+0x24+0xc))
-        self.add_mem_addr("state_vz", "0x{:x}".format(state+0x34+0xc))
-        self.add_mem_addr("state_az", "0x{:x}".format(state+0x44+0xc))
-
 
     def close(self):
         # Function to terminate telnet connection
@@ -151,10 +73,6 @@ class cfSITL(telnetlib.Telnet):
         # otherwise the last command is usually not executed
         time.sleep(0.1) 
         super().close()
-
-    def add_mem_addr(self, identifier: str, addr: str):
-        # Function to add the memory addresses of the variables in the firmware
-        self._addr_book[identifier] = addr
 
     ######################################
     ### LOW LEVEL READ/WRITE FUNCTIONS ###
@@ -313,7 +231,6 @@ class cfSITL(telnetlib.Telnet):
     #    #self.write_mem("0x0048", 0x403752cd, "DoubleWord")
     #    #self.write_mem("0x9694", 0x01, "Byte")
 
-
     def write_acc(self, acc):
         # Function to write accelerometer measurements
         cmd = "sysbus.i2c3.bmi_accel FeedAccSample {:f} {:f} {:f}\r".format(self.accelTomg(acc[0]), self.accelTomg(acc[1]), self.accelTomg(acc[2]))
@@ -420,8 +337,6 @@ class cfSITL(telnetlib.Telnet):
         super().write(b"sysbus.i2c3.bmi_gyro TriggerDataInterrupt; emulation RunFor \"0:0:0.001\"\r")
         super().read_until(b"(CF2.1)")
 
-
-
     ######################################
     ### UTILITY TRANSLATION FUNCRTIONS ###
     ######################################
@@ -450,4 +365,3 @@ class cfSITL(telnetlib.Telnet):
         if num<0 :
             num = (pow(2,16) + num) # C2 
         return int(num)
-
