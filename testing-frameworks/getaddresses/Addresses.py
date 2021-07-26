@@ -7,7 +7,7 @@ import os
 
 class cfAddresses():
 
-    def __init__(self):
+    def __init__(self, keepOffset=True):
         self.myDir = "getaddresses/"
         self.addresses = dict() # init dictionary memory addresses 
         
@@ -20,7 +20,9 @@ class cfAddresses():
         #iterate over retrieve addresses and store in dictionary
         for line in lines:
             line = line.split(" ")
-            line[2]=line[2][1:len(line[2])]
+            #the sitl set up doesn't need the offset of the addresses
+            if not(keepOffset):
+                line[2]=line[2][1:len(line[2])]
             #handle addresses next to each other and then single ones (else branch)
             #this leverages that dictionary uses same names as firmware
             if (line[0]=="motor_ratios"):

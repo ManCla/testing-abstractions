@@ -16,7 +16,7 @@ if __name__ == "__main__":
     port = 4444
     if len(sys.argv) > 1 :
         port = sys.argv[1]
-    addresses = cfAddresses()
+    addresses = cfAddresses(keepOffset=False)
     start_test = time.perf_counter()
     # simulation parameters
     t_init  = 0
