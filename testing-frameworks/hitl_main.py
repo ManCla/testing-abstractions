@@ -20,7 +20,7 @@ if __name__ == "__main__":
 
 	# simulation parameters
 	t_init  = 0
-	t_final = 4
+	t_final = 10
 	t_resolution = 0.001
 	noise  = 0 # if non-zero includes measurement noise with given gains
 	t_curr = t_init
@@ -132,6 +132,6 @@ if __name__ == "__main__":
 	storeObj.est_vel = est_vel
 
 	# save file
-	storeObj.save()
+	storeObj.save("hitl/flightdata")
 
 
