@@ -32,7 +32,20 @@ Clone the [crazyflie-firmware](https://github.com/bitcraze/crazyflie-firmware) r
 For reproducibility all the experiments in the paper were performed with the version of the firmware at commit [23e9b80](https://github.com/bitcraze/crazyflie-firmware/commit/23e9b80caa9137d2953ae6dce57507fda1b05a8c).
 Hence after cloning it is important to checkout to this commit with
 
+> cd crazyflie-firmware
 > git checkout 23e9b80
+
+Copy in the testing.patch file into the firmware repository and apply it with:
+
+> git apply testing.patch
+
+Now you can inspect the changes we made to the firmware with
+
+> git status
+
+and 
+
+>git diff
 
 ## How to Plot Test Results 
 
