@@ -5,7 +5,7 @@ from mitl.StateEstimator import cfEKF
 import time
 
 # import class for storing
-from plot.plot import Storage 
+from plot.Plot import Storage 
 
 if __name__ == "__main__":
 	start_test = time.perf_counter()
