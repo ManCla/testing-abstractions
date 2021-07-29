@@ -114,6 +114,7 @@ if __name__ == "__main__":
     ##############################################
 
     storeObj = Storage()
+    storeObj.type    = "sitl"
     storeObj.t       = t
     storeObj.x       = x_store
     storeObj.u       = u_store
