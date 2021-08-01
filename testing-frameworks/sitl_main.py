@@ -22,6 +22,7 @@ if __name__ == "__main__":
     t_init  = 0
     t_final = 10
     t_resolution = 0.001
+    noise  = 0 # if non-zero includes measurement noise with given gains
     t_curr = t_init
     n_steps = int((t_final-t_init)/t_resolution)
 
@@ -82,10 +83,10 @@ if __name__ == "__main__":
                 #cyber.startFlying()
 
             # store measurements
-            acc[:,i]     = physics.readAcc()
-            gyro[:,i]    = physics.readGyro()
-            pxCount[:,i] = physics.readPixelcount()
-            zrange[i]    = physics.readZRanging()
+            acc[:,i]     = physics.readAcc(Noise=noise)
+            gyro[:,i]    = physics.readGyro(Noise=noise)
+            pxCount[:,i] = physics.readPixelcount(Noise=noise)
+            zrange[i]    = physics.readZRanging(Noise=noise)
 
             # Old version, now uses cyber.write_read to only use one message sent to Renode
             # close loop
