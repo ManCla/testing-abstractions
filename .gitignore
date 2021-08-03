@@ -3,3 +3,6 @@
 
 testing-frameworks/getaddresses/addresses.txt
 **/zzz_archived
+firmware/*.elf
+firmware/*.hex
+firmware/*.map
