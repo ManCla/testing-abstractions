@@ -1,6 +1,6 @@
 1	# version
 4096	# buffer size in bytes
-aaa	# file name
+pitl	# file name
 1	# enable on startup
 on:fixedFrequency
 1
