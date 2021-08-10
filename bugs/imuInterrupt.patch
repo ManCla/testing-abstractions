@@ -1,0 +1,32 @@
+diff --git a/src/config/FreeRTOSConfig.h b/src/config/FreeRTOSConfig.h
+index ad9af7c2..92b7f69b 100644
+--- a/src/config/FreeRTOSConfig.h
++++ b/src/config/FreeRTOSConfig.h
+@@ -148,7 +148,6 @@ to exclude the API function. */
+ #define TASK_PM_ID_NBR          5
+ #define TASK_PROXIMITY_ID_NBR   6
+ 
+-#define configASSERT( x )  if( ( x ) == 0 ) assertFail(#x, __FILE__, __LINE__ )
+ 
+ /*
+ #define traceTASK_SWITCHED_IN() \
+diff --git a/src/hal/src/sensors_bmi088_bmp388.c b/src/hal/src/sensors_bmi088_bmp388.c
+index f5c8c6f2..430c8511 100644
+--- a/src/hal/src/sensors_bmi088_bmp388.c
++++ b/src/hal/src/sensors_bmi088_bmp388.c
+@@ -962,14 +962,8 @@ static void applyAxis3fLpf(lpf2pData *data, Axis3f* in)
+ 
+ void sensorsBmi088Bmp388DataAvailableCallback(void)
+ {
+-  portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+   imuIntTimestamp = usecTimestamp();
+-  xSemaphoreGiveFromISR(sensorsDataReady, &xHigherPriorityTaskWoken);
+-
+-  if (xHigherPriorityTaskWoken)
+-  {
+-    portYIELD();
+-  }
++  xSemaphoreGive(sensorsDataReady);
+ }
+ 
+ #ifdef GYRO_ADD_RAW_AND_VARIANCE_LOG_VALUES
