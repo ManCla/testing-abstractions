@@ -35,24 +35,24 @@ storeObj.gyro[0,:] = dataA['gyro.x']
 storeObj.gyro[1,:] = dataA['gyro.y']
 storeObj.gyro[2,:] = dataA['gyro.z']
 
-storeObj.zrange = dataA['zranger.zrange']
+storeObj.zrange = dataA['zranger.zrange']/1000.0
 storeObj.pxCount = np.zeros((2,n))
 storeObj.pxCount[0,:] = dataA['motion.deltaX']
 storeObj.pxCount[1,:] = dataA['motion.deltaY']
 
 storeObj.est_pos = np.zeros((3,n))
-storeObj.est_pos[0,:] = dataB['stateEstimateZ.x']
-storeObj.est_pos[1,:] = dataB['stateEstimateZ.y']
-storeObj.est_pos[2,:] = dataB['stateEstimateZ.z']
+storeObj.est_pos[0,:] = dataB['stateEstimateZ.x']/1000.0
+storeObj.est_pos[1,:] = dataB['stateEstimateZ.y']/1000.0
+storeObj.est_pos[2,:] = dataB['stateEstimateZ.z']/1000.0
 
 storeObj.est_vel = np.zeros((3,n))
-storeObj.est_vel[0,:] = dataB['stateEstimateZ.vx']
-storeObj.est_vel[1,:] = dataB['stateEstimateZ.vy']
-storeObj.est_vel[2,:] = dataB['stateEstimateZ.vz']
+storeObj.est_vel[0,:] = dataB['stateEstimateZ.vx']/1000.0
+storeObj.est_vel[1,:] = dataB['stateEstimateZ.vy']/1000.0
+storeObj.est_vel[2,:] = dataB['stateEstimateZ.vz']/1000.0
 
 storeObj.set_pt = np.zeros((3,n))
-storeObj.set_pt[0,:] = dataB['ctrltargetZ.x']
-storeObj.set_pt[1,:] = dataB['ctrltargetZ.y']
-storeObj.set_pt[2,:] = dataB['ctrltargetZ.z']
+storeObj.set_pt[0,:] = dataB['ctrltargetZ.x']/1000.0
+storeObj.set_pt[1,:] = dataB['ctrltargetZ.y']/1000.0
+storeObj.set_pt[2,:] = dataB['ctrltargetZ.z']/1000.0
 
 storeObj.save("pitl/flightdata")
