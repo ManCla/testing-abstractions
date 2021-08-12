@@ -2,6 +2,7 @@ import os
 import time
 import pickle as pk
 import matplotlib.pyplot as plt
+import numpy as np
 
 # global variable: configuration
 # should I remove intermediate files or not
@@ -27,6 +28,8 @@ class Storage:
     with open(self.data_location, 'rb') as f:
       self.data = pk.load(f)
     print('Reading data from file: \033[4m' + self.data_location + '\033[0m')
+    self.type = self.data.type
+    print('Type of test is: ' + self.type)
     self.unwrap()
 
   def unwrap(self):
@@ -34,9 +37,14 @@ class Storage:
     self.time = self.data.t
     self.trace_length = len(self.time)
 
-    self.position_x = self.data.pos[0, :]
-    self.position_y = self.data.pos[1, :]
-    self.position_z = self.data.pos[2, :]
+    if not(self.type=='pitl'):
+      self.position_x = self.data.pos[0, :]
+      self.position_y = self.data.pos[1, :]
+      self.position_z = self.data.pos[2, :]
+    else:
+      self.position_x = np.zeros(len(self.time))
+      self.position_y = np.zeros(len(self.time))
+      self.position_z = np.zeros(len(self.time))
     self.estimated_position_x = self.data.est_pos[0, :]
     self.estimated_position_y = self.data.est_pos[1, :]
     self.estimated_position_z = self.data.est_pos[2, :]
@@ -44,9 +52,14 @@ class Storage:
     self.setpoint_position_y = self.data.set_pt[1, :]
     self.setpoint_position_z = self.data.set_pt[2, :]
 
-    self.velocity_x = self.data.vel[0, :]
-    self.velocity_y = self.data.vel[1, :]
-    self.velocity_z = self.data.vel[2, :]
+    if not(self.type=='pitl'):
+      self.velocity_x = self.data.vel[0, :]
+      self.velocity_y = self.data.vel[1, :]
+      self.velocity_z = self.data.vel[2, :]
+    else:
+      self.velocity_x = np.zeros(len(self.time))
+      self.velocity_y = np.zeros(len(self.time))
+      self.velocity_z = np.zeros(len(self.time))
     self.estimated_velocity_x = self.data.est_vel[0, :]
     self.estimated_velocity_y = self.data.est_vel[1, :]
     self.estimated_velocity_z = self.data.est_vel[2, :]
@@ -55,19 +68,29 @@ class Storage:
     self.acceleration_y = self.data.acc[1, :]
     self.acceleration_z = self.data.acc[2, :]
 
-    self.attitude_x = self.data.eta[0, :]
-    self.attitude_y = self.data.eta[1, :]
-    self.attitude_z = self.data.eta[2, :]
+    if not(self.type=='pitl'):
+      self.attitude_x = self.data.eta[0, :]
+      self.attitude_y = self.data.eta[1, :]
+      self.attitude_z = self.data.eta[2, :]
+    else:
+      self.attitude_x = np.zeros(len(self.time))
+      self.attitude_y = np.zeros(len(self.time))
+      self.attitude_z = np.zeros(len(self.time))
     self.gyro_x = self.data.gyro[0, :]
     self.gyro_y = self.data.gyro[1, :]
     self.gyro_z = self.data.gyro[2, :]
 
     self.pixel_count_x = self.data.pxCount[0, :]
-    self.kalman_error_x = self.data.err_fd[1, :]
     self.pixel_count_y = self.data.pxCount[1, :]
-    self.kalman_error_y = self.data.err_fd[2, :]
     self.range_z = self.data.zrange
-    self.kalman_error_z = self.data.err_fd[0, :]
+    if not(self.type=='pitl'):
+      self.kalman_error_x = self.data.err_fd[1, :]
+      self.kalman_error_y = self.data.err_fd[2, :]
+      self.kalman_error_z = self.data.err_fd[0, :]
+    else:
+      self.kalman_error_x = np.zeros(len(self.time))
+      self.kalman_error_y = np.zeros(len(self.time))
+      self.kalman_error_z = np.zeros(len(self.time))
 
     self.control_motor_1 = self.data.u[0, :]
     self.control_motor_2 = self.data.u[1, :]
@@ -156,32 +179,37 @@ class Storage:
       f.write(r'\nextgroupplot[title = {Position $x$}, legend pos = north east]' + '\n')
       f.write(r'\addplot[ultra thick, black] table[col sep=comma, x index=1, y index=8] {' + csv_location + r'};' + '\n')
       f.write(r'\addlegendentry{Setpoint $x$}' + '\n')
-      f.write(r'\addplot[ultra  thick, blue] table[col sep=comma, x index=1, y index=2] {' + csv_location + r'};' + '\n')
-      f.write(r'\addlegendentry{Position $x$}' + '\n')
+      if not(self.type=='pitl'):
+        f.write(r'\addplot[ultra  thick, blue] table[col sep=comma, x index=1, y index=2] {' + csv_location + r'};' + '\n')
+        f.write(r'\addlegendentry{Position $x$}' + '\n')
       f.write(r'\addplot[ultra  thick, blue, densely dotted] table[col sep=comma, x index=1, y index=5] {' + csv_location + r'};' + '\n')
       f.write(r'\addlegendentry{Estimated $x$}' + '\n')
       f.write(r'\nextgroupplot[title = {Velocity $x$}]' + '\n')
-      f.write(r'\addplot[ultra  thick, blue] table[col sep=comma, x index=1, y index=11] {' + csv_location + r'};' + '\n')
-      f.write(r'\addlegendentry{Velocity $x$}' + '\n')
+      if not(self.type=='pitl'):
+        f.write(r'\addplot[ultra  thick, blue] table[col sep=comma, x index=1, y index=11] {' + csv_location + r'};' + '\n')
+        f.write(r'\addlegendentry{Velocity $x$}' + '\n')
       f.write(r'\addplot[ultra  thick, blue, densely dotted] table[col sep=comma, x index=1, y index=14] {' + csv_location + r'};' + '\n')
       f.write(r'\addlegendentry{Estimated velocity $x$}' + '\n')
       f.write(r'\nextgroupplot[title = {Position $y$}]' + '\n')
       f.write(r'\addplot[ultra thick, black] table[col sep=comma, x index=1, y index=9] {' + csv_location + r'};' + '\n')
       f.write(r'\addlegendentry{Setpoint $y$}' + '\n')
-      f.write(r'\addplot[ultra  thick, green!60!black] table[col sep=comma, x index=1, y index=3] {' + csv_location + r'};' + '\n')
-      f.write(r'\addlegendentry{Position $y$}' + '\n')
+      if not(self.type=='pitl'):
+        f.write(r'\addplot[ultra  thick, green!60!black] table[col sep=comma, x index=1, y index=3] {' + csv_location + r'};' + '\n')
+        f.write(r'\addlegendentry{Position $y$}' + '\n')
       f.write(r'\addplot[ultra  thick, green!60!black, densely dotted] table[col sep=comma, x index=1, y index=6] {' + csv_location + r'};' + '\n')
       f.write(r'\addlegendentry{Estimated $y$}' + '\n')
       f.write(r'\nextgroupplot[title = {Velocity $y$}, legend pos = north east]' + '\n')
-      f.write(r'\addplot[ultra  thick, green!60!black] table[col sep=comma, x index=1, y index=12] {' + csv_location + r'};' + '\n')
-      f.write(r'\addlegendentry{Velocity $y$}' + '\n')
+      if not(self.type=='pitl'):
+        f.write(r'\addplot[ultra  thick, green!60!black] table[col sep=comma, x index=1, y index=12] {' + csv_location + r'};' + '\n')
+        f.write(r'\addlegendentry{Velocity $y$}' + '\n')
       f.write(r'\addplot[ultra  thick, green!60!black, densely dotted] table[col sep=comma, x index=1, y index=15] {' + csv_location + r'};' + '\n')
       f.write(r'\addlegendentry{Estimated velocity $y$}' + '\n')
       f.write(r'\nextgroupplot[title = {Position $z$}]' + '\n')
       f.write(r'\addplot[ultra thick, black] table[col sep=comma, x index=1, y index=10] {' + csv_location + r'};' + '\n')
       f.write(r'\addlegendentry{Setpoint $z$}' + '\n')
-      f.write(r'\addplot[ultra  thick, red!80!black] table[col sep=comma, x index=1, y index=4] {' + csv_location + r'};' + '\n')
-      f.write(r'\addlegendentry{Position $z$}' + '\n')
+      if not(self.type=='pitl'):
+        f.write(r'\addplot[ultra  thick, red!80!black] table[col sep=comma, x index=1, y index=4] {' + csv_location + r'};' + '\n')
+        f.write(r'\addlegendentry{Position $z$}' + '\n')
       f.write(r'\addplot[ultra  thick, red!80!black, densely dotted] table[col sep=comma, x index=1, y index=7] {' + csv_location + r'};' + '\n')
       f.write(r'\addlegendentry{Estimated $z$}' + '\n')
       f.write(r'\nextgroupplot[title = {Velocity $z$}, legend pos = north east]' + '\n')
@@ -197,12 +225,13 @@ class Storage:
       f.write(r'\addplot[ultra  thick, red!80!black] table[col sep=comma, x index=1, y index=19] {' + csv_location + r'};' + '\n')
       f.write(r'\addlegendentry{$z$}' + '\n')
       f.write(r'\nextgroupplot[title = {Attitude $x, y, z$}, legend columns = 3, legend pos = north east]' + '\n')
-      f.write(r'\addplot[ultra  thick, blue] table[col sep=comma, x index=1, y index=20] {' + csv_location + r'};' + '\n')
-      f.write(r'\addlegendentry{$x$}' + '\n')
-      f.write(r'\addplot[ultra  thick, green!60!black] table[col sep=comma, x index=1, y index=21] {' + csv_location + r'};' + '\n')
-      f.write(r'\addlegendentry{$y$}' + '\n')
-      f.write(r'\addplot[ultra  thick, red!80!black] table[col sep=comma, x index=1, y index=22] {' + csv_location + r'};' + '\n')
-      f.write(r'\addlegendentry{$z$}' + '\n')
+      if not(self.type=='pitl'):
+        f.write(r'\addplot[ultra  thick, blue] table[col sep=comma, x index=1, y index=20] {' + csv_location + r'};' + '\n')
+        f.write(r'\addlegendentry{$x$}' + '\n')
+        f.write(r'\addplot[ultra  thick, green!60!black] table[col sep=comma, x index=1, y index=21] {' + csv_location + r'};' + '\n')
+        f.write(r'\addlegendentry{$y$}' + '\n')
+        f.write(r'\addplot[ultra  thick, red!80!black] table[col sep=comma, x index=1, y index=22] {' + csv_location + r'};' + '\n')
+        f.write(r'\addlegendentry{$z$}' + '\n')
       f.write(r'\nextgroupplot[title = {Gyro $x, y, z$}, legend columns = 3, legend pos = north east]' + '\n')
       f.write(r'\addplot[ultra  thick, blue] table[col sep=comma, x index=1, y index=23] {' + csv_location + r'};' + '\n')
       f.write(r'\addlegendentry{$x$}' + '\n')
@@ -219,12 +248,13 @@ class Storage:
       f.write(r'\addplot[ultra  thick, green!60!black] table[col sep=comma, x index=1, y index=28] {' + csv_location + r'};' + '\n')
       f.write(r'\addlegendentry{$y$}' + '\n')
       f.write(r'\nextgroupplot[title = {Kalman errors $x,y,z$}, legend columns = 3, legend pos = north east]' + '\n')
-      f.write(r'\addplot[ultra  thick, blue, densely dotted] table[col sep=comma, x index=1, y index=27] {' + csv_location + r'};' + '\n')
-      f.write(r'\addlegendentry{$x$}' + '\n')
-      f.write(r'\addplot[ultra  thick, green!60!black, densely dotted] table[col sep=comma, x index=1, y index=29] {' + csv_location + r'};' + '\n')
-      f.write(r'\addlegendentry{$y$}' + '\n')
-      f.write(r'\addplot[ultra  thick, red!80!black] table[col sep=comma, x index=1, y index=31] {' + csv_location + r'};' + '\n')
-      f.write(r'\addlegendentry{$z$}' + '\n')
+      if not(self.type=='pitl'):
+        f.write(r'\addplot[ultra  thick, blue, densely dotted] table[col sep=comma, x index=1, y index=27] {' + csv_location + r'};' + '\n')
+        f.write(r'\addlegendentry{$x$}' + '\n')
+        f.write(r'\addplot[ultra  thick, green!60!black, densely dotted] table[col sep=comma, x index=1, y index=29] {' + csv_location + r'};' + '\n')
+        f.write(r'\addlegendentry{$y$}' + '\n')
+        f.write(r'\addplot[ultra  thick, red!80!black] table[col sep=comma, x index=1, y index=31] {' + csv_location + r'};' + '\n')
+        f.write(r'\addlegendentry{$z$}' + '\n')
       f.write(r'\nextgroupplot[title = {Motors control signals $u_1$}]' + '\n')
       f.write(r'\addplot[ultra  thick, black] table[col sep=comma, x index=1, y index=32] {' + csv_location + r'};' + '\n')
       f.write(r'\addlegendentry{$u_1$}' + '\n')
@@ -243,14 +273,23 @@ class Storage:
       f.write(r'\end{document}' + '\n')
 
   def trajectoryPlot(self):
-    # plot trajectory in space
-    plt.figure('3D trajectory')
-    ax = plt.axes(projection="3d", label="uniquelabel")
-    ax.plot(self.position_x, self.position_y, self.position_z, 'r', label="position")
-    ax.set_xlabel('x')
-    ax.set_ylabel('y')
-    ax.set_zlabel('z')
-    print('* figure 1:\033[33m 3d position\033[0m')
+    if not(self.type=='pitl'):# plot trajectory in space
+      plt.figure('3D trajectory')
+      ax = plt.axes(projection="3d", label="uniquelabel")
+      ax.plot(self.position_x, self.position_y, self.position_z, 'r', label="position")
+      ax.set_xlabel('x')
+      ax.set_ylabel('y')
+      ax.set_zlabel('z')
+      print('* figure 1:\033[33m 3d position\033[0m')
+    else :
+      # plot trajectory in space
+      plt.figure('estimated 3D trajectory')
+      ax = plt.axes(projection="3d", label="uniquelabel")
+      ax.plot(self.estimated_position_x, self.estimated_position_y, self.estimated_position_z, 'r', label="position")
+      ax.set_xlabel('x')
+      ax.set_ylabel('y')
+      ax.set_zlabel('z')
+      print('* figure 1:\033[33m 3d position\033[0m')
 
   def positionSpeedPlot(self):
     # now plot all the others
@@ -264,39 +303,45 @@ class Storage:
 
     axs[0, 0].title.set_text('Position (x)')
     axs[0, 0].plot(self.time, self.setpoint_position_x, 'k')
-    axs[0, 0].plot(self.time, self.position_x, 'b')
+    if not(self.type=='pitl'):
+      axs[0, 0].plot(self.time, self.position_x, 'b')
     axs[0, 0].plot(self.time, self.estimated_position_x, 'b:')
     axs[0, 0].legend(['setpoint', 'position', 'estimated position'])
     axs[0, 0].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
 
     axs[1, 0].title.set_text('Position (y)')
     axs[1, 0].plot(self.time, self.setpoint_position_y, 'k')
-    axs[1, 0].plot(self.time, self.position_y, 'g')
+    if not(self.type=='pitl'):
+      axs[1, 0].plot(self.time, self.position_y, 'g')
     axs[1, 0].plot(self.time, self.estimated_position_y, 'g:')
     axs[1, 0].legend(['setpoint', 'position', 'estimated position'])
     axs[1, 0].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
 
     axs[2, 0].title.set_text('Position (z)')
     axs[2, 0].plot(self.time, self.setpoint_position_z, 'k')
-    axs[2, 0].plot(self.time, self.position_z, 'r')
+    if not(self.type=='pitl'):
+      axs[2, 0].plot(self.time, self.position_z, 'r')
     axs[2, 0].plot(self.time, self.estimated_position_z, 'r:')
     axs[2, 0].legend(['setpoint', 'position', 'estimated position'])
     axs[2, 0].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
 
     axs[0, 1].title.set_text('Velocity (x)')
-    axs[0, 1].plot(self.time, self.velocity_x, 'b')
+    if not(self.type=='pitl'):
+      axs[0, 1].plot(self.time, self.velocity_x, 'b')
     axs[0, 1].plot(self.time, self.estimated_velocity_x, 'b:')
     axs[0, 1].legend(['velocity', 'estimated velocity'])
     axs[0, 1].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
 
     axs[1, 1].title.set_text('Velocity (y)')
-    axs[1, 1].plot(self.time, self.velocity_y, 'g')
+    if not(self.type=='pitl'):
+      axs[1, 1].plot(self.time, self.velocity_y, 'g')
     axs[1, 1].plot(self.time, self.estimated_velocity_y, 'g:')
     axs[1, 1].legend(['velocity', 'estimated velocity'])
     axs[1, 1].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
 
     axs[2, 1].title.set_text('Velocity (z)')
-    axs[2, 1].plot(self.time, self.velocity_z, 'r')
+    if not(self.type=='pitl'):
+      axs[2, 1].plot(self.time, self.velocity_z, 'r')
     axs[2, 1].plot(self.time, self.estimated_velocity_z, 'r:')
     axs[2, 1].legend(['velocity', 'estimated velocity'])
     axs[2, 1].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
@@ -319,12 +364,13 @@ class Storage:
     axs[0, 0].legend(['x', 'y', 'z'])
     axs[0, 0].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
 
-    axs[0, 1].title.set_text('Attitude (x,y,z)')
-    axs[0, 1].plot(self.time, self.attitude_x, 'b')
-    axs[0, 1].plot(self.time, self.attitude_y, 'g')
-    axs[0, 1].plot(self.time, self.attitude_z, 'r')
-    axs[0, 1].legend(['x', 'y', 'z'])
-    axs[0, 1].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
+    if not(self.type=='pitl'):
+      axs[0, 1].title.set_text('Attitude (x,y,z)')
+      axs[0, 1].plot(self.time, self.attitude_x, 'b')
+      axs[0, 1].plot(self.time, self.attitude_y, 'g')
+      axs[0, 1].plot(self.time, self.attitude_z, 'r')
+      axs[0, 1].legend(['x', 'y', 'z'])
+      axs[0, 1].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
 
     axs[1, 0].title.set_text('Gyro (x,y,z)')
     axs[1, 0].plot(self.time, self.gyro_x, 'b')
@@ -344,12 +390,13 @@ class Storage:
     axs[2, 0].legend(['x', 'y'])
     axs[2, 0].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
 
-    axs[2, 1].title.set_text('Kalman errors (x,y,z)')
-    axs[2, 1].plot(self.time, self.kalman_error_x, 'b')
-    axs[2, 1].plot(self.time, self.kalman_error_y, 'g')
-    axs[2, 1].plot(self.time, self.kalman_error_z, 'r')
-    axs[2, 1].legend(['x', 'y', 'z'])
-    axs[2, 1].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
+    if not(self.type=='pitl'):
+      axs[2, 1].title.set_text('Kalman errors (x,y,z)')
+      axs[2, 1].plot(self.time, self.kalman_error_x, 'b')
+      axs[2, 1].plot(self.time, self.kalman_error_y, 'g')
+      axs[2, 1].plot(self.time, self.kalman_error_z, 'r')
+      axs[2, 1].legend(['x', 'y', 'z'])
+      axs[2, 1].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
     print('* figure 3:\033[33m sensor data and Kalman errors\033[0m')
 
 
