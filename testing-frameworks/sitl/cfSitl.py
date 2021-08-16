@@ -14,13 +14,9 @@ from struct import pack, unpack
 class cfSITL(telnetlib.Telnet):
 
     def __init__(self, addresses, port):
-        # Init Function: it established communication with openocd and initializes
-        # the needed variables.
         super().__init__("localhost", port, 10) # init telnet comm
         super().set_debuglevel(0)
         
-        # Not sure how to time this correctly...
-        #TODO fix
         super().read_until(b"(monitor)", 2)
         super().write(b"\r")
         super().read_until(b"(monitor)", 1)
@@ -57,15 +53,6 @@ class cfSITL(telnetlib.Telnet):
             print(rdy)
         print(rdy)
         print("Startup should be passed now")
-
-    #def try_calibrate(self):
-    #    print("Running due to the accelerometer...")
-    #    for i in range(1000):
-    #        if not i%25:
-    #            print(i)
-    #        super().write(b"sysbus.i2c3.bmi_gyro TriggerDataInterrupt;emulation RunFor \"0:0:0.001\"\r")
-    #        super().read_until(b"(CF2.1)")
-    #    print("Initial transient should be handled!")
 
     def close(self):
         # Function to terminate telnet connection
@@ -150,30 +137,18 @@ class cfSITL(telnetlib.Telnet):
     def estimatedPosition(self):
         # Function that reads position estimated by the cf
         # stateCompressed is read since it is an integer (in mm to retain precision)
-        #x = self.c2ToInt16(int(self.read_word(self._addr_book['stateCompressed_x']),16))/1000
-        #y = self.c2ToInt16(int(self.read_word(self._addr_book['stateCompressed_y']),16))/1000
-        #z = self.c2ToInt16(int(self.read_word(self._addr_book['stateCompressed_z']),16))/1000
-        #return [x,y,z]
         est = [byte.strip() for byte in self.read_mem(self._addr_book['stateCompressed_x'], 0x6).split(',')]
         return [self.c2ToInt16(int(msb+lsb.removeprefix('0x'),16))/1000 for lsb,msb in zip(est[0::2], est[1::2])]
 
     def estimatedVelocity(self):
         # Function that reads velocity estimated by the cf
         # stateCompressed is read since it is an integer (in mm to retain precision)
-        #vx = self.c2ToInt16(int(self.read_word(self._addr_book['stateCompressed_vx']),16))/1000
-        #vy = self.c2ToInt16(int(self.read_word(self._addr_book['stateCompressed_vy']),16))/1000
-        #vz = self.c2ToInt16(int(self.read_word(self._addr_book['stateCompressed_vz']),16))/1000
-        #return [vx,vy,vz]
         est = [byte.strip() for byte in self.read_mem(self._addr_book['stateCompressed_vx'], 0x6).split(',')]
         return [self.c2ToInt16(int(msb+lsb.removeprefix('0x'),16))/1000 for lsb,msb in zip(est[0::2], est[1::2])]
 
     def setPoint(self):
         # Function that reads setpoint from cf
         # stateCompressed is read since it is an integer (in mm to retain precision)
-        #x = self.c2ToInt16(int(self.read_word(self._addr_book['setpointCompressed_x']),16))/1000
-        #y = self.c2ToInt16(int(self.read_word(self._addr_book['setpointCompressed_y']),16))/1000
-        #z = self.c2ToInt16(int(self.read_word(self._addr_book['setpointCompressed_z']),16))/1000
-        #return [x,y,z]
         sp = [byte.strip() for byte in self.read_mem(self._addr_book['setpointCompressed_x'], 0x6).split(',')]
         return [self.c2ToInt16(int(msb+lsb.removeprefix('0x'),16))/1000 for lsb,msb in zip(sp[0::2], sp[1::2])]
 
@@ -213,23 +188,6 @@ class cfSITL(telnetlib.Telnet):
     ##########################
     ### WRITING FUNCRTIONS ###
     ##########################
-
-    #TODO: delete?
-    #def read_state(self):
-    #    p = int(self.read_double_word(self._addr_book['state_z']) ,16)
-    #    v = int(self.read_double_word(self._addr_book['state_vz']),16)
-    #    a = int(self.read_double_word(self._addr_book['state_az']),16)
-    #    ac = int(self.read_double_word("0xd24c"),16)
-    #    accscale = int(self.read_double_word("0x0048"),16)
-    #    return (unpack('f',pack('I',p)),unpack('f',pack('I',v)),unpack('f',pack('I',a)),unpack('f',pack('I',ac)),unpack('f',pack('I',accscale)))
-
-    #def clear_state(self):
-    #    self.write_mem(self._addr_book['state_z'],  0x00000000, "DoubleWord")
-    #    self.write_mem(self._addr_book['state_vz'], 0x00000000, "DoubleWord")
-    #    self.write_mem(self._addr_book['state_az'], 0x00000000, "DoubleWord")
-    #    #self.write_mem("0xd24c", 0x3f800000, "DoubleWord")
-    #    #self.write_mem("0x0048", 0x403752cd, "DoubleWord")
-    #    #self.write_mem("0x9694", 0x01, "Byte")
 
     def write_acc(self, acc):
         # Function to write accelerometer measurements
@@ -289,10 +247,6 @@ class cfSITL(telnetlib.Telnet):
         Delta = (mdpxx<<16)+mdpxy
         zmm = int(zm*1000) # convert to millimeters
 
-        #TODO: The communication with Renode may fail. The try/catch block is meant to be a failsafe, uncomment (and fix indentation because Python) to enable. Is there a better way?
-        #for _ in range(10):
-        #    try:
-            #super().write("sysbus.i2c3.bmi_accel FeedAccSample {:f} {:f} {:f};\
         cmd = "sysbus.i2c3.bmi_accel FeedAccSample {:f} {:f} {:f};\
                 sysbus.i2c3.bmi_gyro FeedGyroSample {:f} {:f} {:f};\
                 sysbus.i2c3.bmi_gyro TriggerDataInterrupt;\
@@ -316,7 +270,6 @@ class cfSITL(telnetlib.Telnet):
                 self._addr_book["error_flowx"],\
                 self._addr_book["error_flowy"],\
                 duration)
-                #duration).encode())
         super().write(cmd.encode())
         read = super().read_until(b"(CF2.1)")
         read = [byte.strip(b",") for byte in ((read.partition(b"\n\r"))[2].rpartition(b"\x1b"))[0].split()] # TODO Better way to do it?
@@ -325,13 +278,6 @@ class cfSITL(telnetlib.Telnet):
         setp = [self.c2ToInt16(int(msb+lsb.removeprefix(b'0x'),16))/1000 for lsb,msb in zip(read[17:23:2], read[18:23:2])]
         eflw = [self.c2ToInt16(int(word,16))/1000 for word in read[24:27]]
         return (estp,estv,setp,eflw)
-            #except ValueError:
-            #    print("There was a ValueError in read_write! Command sent was: ")
-            #    print(cmd)
-            #    time.sleep(0.1)
-            #    pass
-            #else:
-            #    raise Exception
 
     def idle(self):
         super().write(b"sysbus.i2c3.bmi_gyro TriggerDataInterrupt; emulation RunFor \"0:0:0.001\"\r")

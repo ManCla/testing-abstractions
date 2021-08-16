@@ -47,18 +47,12 @@ if __name__ == "__main__":
     cyber.pass_startup()
     cyber.startFlying()
 
-    #print("Calibration?")
-    #for j in range(200): #TODO Run this loop for 200 iterations or change firmware?
-    #   print(j)
-    #   cyber.idle()
-
     print("About to start the main loop! Will take {} steps.".format(n_steps))
 
     i = 0                       #counter
 
     # first iteration , only used to send start signal and initialize tick count
     tick[i] = cyber.tickCount()
-    #TODO read sensors here?
     i = i+1
 
     # main loop
@@ -77,28 +71,11 @@ if __name__ == "__main__":
             u_store[:,i] = cyber.motors()     # read motor values and store control action
             x_store[:,i] = physics.simulate(t_curr, u_store[:,i]) # simulate physics
 
-            # if not i%10:
-            #     print(i)
-                # Can modify the hover application to wait for the start variable to be set instead of waiting 10 ms.
-                #cyber.startFlying()
-
             # store measurements
             acc[:,i]     = physics.readAcc(Noise=noise)
             gyro[:,i]    = physics.readGyro(Noise=noise)
             pxCount[:,i] = physics.readPixelcount(Noise=noise)
             zrange[i]    = physics.readZRanging(Noise=noise)
-
-            # Old version, now uses cyber.write_read to only use one message sent to Renode
-            # close loop
-            #cyber.write_acc(acc[:,i])
-            #cyber.write_gyro(gyro[:,i])
-            #cyber.write_opticalflow(pxCount[:,i])
-            #cyber.write_zranger(zrange[i])
-            # store data from drone
-            #est_pos[:,i] = cyber.estimatedPosition()
-            #est_vel[:,i] = cyber.estimatedVelocity()
-            #set_pt[:,i]  = cyber.setPoint()
-            #err_fd[:,i]  = cyber.flowErrors()
 
             (est_pos[:,i], est_vel[:,i], set_pt[:,i], err_fd[:,i]) = cyber.write_read(acc[:,i], gyro[:,i], pxCount[:,i], zrange[i], "0.001")
             i=i+1             # increase counter
