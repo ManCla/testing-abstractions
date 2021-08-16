@@ -1,11 +1,11 @@
 # Firmware
 
 Put in this directory the binaries that you want to test.
-In both testing levels the _.map_ file is used to retrieve the memory addresses.
-In the sitl level the _.elf_ file is the one flashed to the emulated hardware.
+For both abstractions the `cf2.map` file is used to retrieve the memory addresses.
+For SitL the `cf2.elf` file is the one flashed to the emulated hardware.
 
-## sitl
-For sitl testing are needed the _cf2.elf_ file and the _cf2.map_ file.
+## SitL
+For SitL testing are needed the `cf2.elf` file and the `cf2.map` file.
 
-## hitl
-For hitl testing only the _cf2.map_ file is needed. But make sure the harware is flashed with the corresponding firmware. 
+## HitL
+For HitL testing only the `cf2.map` file is needed in this directory. Make sure the harware is flashed with the corresponding firmware. 

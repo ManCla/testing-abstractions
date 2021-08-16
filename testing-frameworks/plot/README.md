@@ -1,6 +1,7 @@
 # Plotting experimental data
 
 We provide two alternatives to plot the data obtained in the experimental phase:
+
 * `pdf` uses `lualatex` and `pgfplots` to generate a PDF with the plots,
 * `show` uses `matplotlib` to generate plots for display
 
