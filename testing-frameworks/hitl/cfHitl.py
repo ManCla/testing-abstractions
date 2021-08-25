@@ -81,7 +81,6 @@ class cfHITL(telnetlib.Telnet):
 
     def startFlying(self):
         # Function to trigger the boolean that gets the drone out of the waiting 
-        # loop in the hover_claudio.c demo app
         self.write_mem_addr(self._addr_book['start'], str(1))
 
     def waitBreakpointHit(self):
