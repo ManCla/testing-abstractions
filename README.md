@@ -3,7 +3,7 @@
 Repository associated to the paper _Comparison of Testing Abstractions for Integration Testing of Embedded Control Software_ submitted to ICSE 2022.
 The paper discusses the capacity of different testing setups to show bugs in control software.
 It contains an experimental campaign based on the [Crazyflie 2.1](https://store.bitcraze.io/products/crazyflie-2-1).
-In this repository you will find all the code used in the paper experiments and the instructions to reproduce the results.
+In this repository you will find all the code used in the paper experiments and the instructions to reproduce the tests.
 Moreover are also provided the flight data for each experiment, together with pre-generated pdf files containing the plots.
 
 ## Repository Structure:
@@ -18,7 +18,7 @@ Moreover are also provided the flight data for each experiment, together with pr
 
 Each testing setup folder contains:
 
- * the Python class files specific to each abstraction. An exception is made for the physical model definition: the one in the **mitl** folder is used at each testing abstraction.
+ * the Python class files specific to each abstraction. An exception is made for the physical model simulator: the one in the **mitl** folder is used at each testing abstraction.
  * a subfolder **flightdata** containing the flight data for each test shown in the paper.
  * a subfolder **pdf** containing the complete plots of the flight data for each test shown in the paper.
 
@@ -55,12 +55,24 @@ and
 
 > git diff
 
+## Compile the code
+
+In a terminal window navigate to the `crazyflie-firmware` repository and then to the directory containing the [application](https://www.bitcraze.io/documentation/repository/crazyflie-firmware/master/userguides/app_layer/) that implement the autonomous flight performing the step sequence. Do so with the following:
+
+> cd examples/demos/app_steps/
+
+Now you can compile the firmware for the desired testing setup with *one* of the following commands:
+
+> make sitl
+> make hitl
+> make pitl
+
+## Running the tests
+
+Instructions on how to run the testing setups are provided in the readme file of the `testing-frameworks` directory.
+
 ## How to Plot Test Results 
 
 Detailed instructions are provided in the **plot/** directory but to just display the results from a test use:
 
 > python plot_main.py show path/to/flight-data
-
-## Running the tests
-
-Instructions on how to run the testing frameworks are provided in the readme file of the `testing-frameworks` directory.
