@@ -1,15 +1,16 @@
 # testing-levels
 
-Repository associated to the paper PAPER TITLE HERE. 
+Repository associated to the paper _Comparison of Testing Abstractions for Integration Testing of Embedded Control Software_. 
 
 ## Repository Structure:
 
- * **mitl**: directory associated to the Model-In-The-Loop testing abstraction
- * **sitl**: directory associated to the Software-In-The-Loop testing abstraction
- * **hitl**: directory associated to the Hardware-In-The-Loop testing abstraction
- * **pitl**: directory associated to the Process-In-The-Loop testing abstraction
+ * **mitl**: directory associated to the Model-In-The-Loop testing setup
+ * **sitl**: directory associated to the Software-In-The-Loop testing setup
+ * **hitl**: directory associated to the Hardware-In-The-Loop testing setup
+ * **pitl**: directory associated to the Process-In-The-Loop testing setup
  * **plot**: directory containing the Python plotting class
  * **bugs**: directory containing the patch files that inject the bugs discussed in the paper
+ * **firmware**: directory containing the firmware patch file and where to put binaries under test
 
 Each testing abstraction folder contains:
 
@@ -33,10 +34,13 @@ For reproducibility all the experiments in the paper were performed with the ver
 Hence after cloning it is important to checkout to this commit with
 
 > cd crazyflie-firmware
-
 > git checkout 23e9b80
 
-Copy in the `bugName.patch` file corresponding to the desired bug into the firmware repository and apply it with:
+Copy in the `crazyflie-firmware` directory the `firmware.patch` file that contains our changes to the firmware and apply it with:
+
+> git apply firmware.patch
+
+To inject the desired bug copy in the `crazyflie-firmware` directory the `bugName.patch` file corresponding to the desired bug into the firmware repository and apply it with:
 
 > git apply bugName.patch
 
