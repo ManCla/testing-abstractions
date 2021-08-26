@@ -40,8 +40,6 @@ Hence after cloning it is important to checkout to this commit with
 
 ```console
 cd crazyflie-firmware
-```
-```console
 git checkout 23e9b80
 ```
 
