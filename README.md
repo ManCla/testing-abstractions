@@ -20,7 +20,7 @@ Each testing setup folder contains:
 
 ## Dependencies
 
-Python 3, openOCD, Renode, gdb
+[Python 3](https://www.python.org/downloads/release/python-391/), [openOCD](https://www.openocd.org/), [Renode]() (setup instructions in the `testing-frameworks/sitl` directory), [gdb](https://www.gnu.org/software/gdb/)
 
 Everything has been tested with: MacOS 11.1 and Linux
 
