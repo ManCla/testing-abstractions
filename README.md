@@ -14,10 +14,9 @@ Repository associated to the paper _Comparison of Testing Abstractions for Integ
 
 Each testing setup folder contains:
 
- * a patch file to be applied to the correct version of the Bitcraze crazyflie-firmware repository (see below). Exception is made for the MitL testing level that does not execute the firmware, hence no patch file is needed.
  * the Python class files specific to each abstraction. An exception is made for the physical model definition: the one in the **mitl** folder is used at each testing abstraction.
  * a subfolder **flightdata** containing the flight data for each test shown in the paper.
- * a subfolder **pdf** containing the more complete plots of the flight data for each test shown in the paper.
+ * a subfolder **pdf** containing the complete plots of the flight data for each test shown in the paper.
 
 ## Dependencies
 
