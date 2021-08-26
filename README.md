@@ -47,7 +47,7 @@ To inject the desired bug copy in the `crazyflie-firmware` directory the `bugNam
 
 > git apply bugName.patch
 
-Now you can inspect the changes we made to the firmware with
+Now you can inspect the changes we made to the firmware with (or by just looking at the text content of the patch files):
 
 > git status
 
@@ -57,7 +57,7 @@ and
 
 ## Compile the code
 
-In a terminal window navigate to the `crazyflie-firmware` repository and then to the directory containing the [application](https://www.bitcraze.io/documentation/repository/crazyflie-firmware/master/userguides/app_layer/) that implement the autonomous flight performing the step sequence. Do so with the following:
+In a terminal window navigate to the `crazyflie-firmware` repository and then to the directory containing the [application](https://www.bitcraze.io/documentation/repository/crazyflie-firmware/master/userguides/app_layer/) that implements the autonomous flight performing the step sequence. Do so with the following:
 
 > cd examples/demos/app_steps/
 
