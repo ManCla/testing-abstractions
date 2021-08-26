@@ -75,9 +75,9 @@ The test should start and time updated should be displayed. If nothing appears i
 ## Run PitL
 Mount the [Micro-SD card deck](https://www.bitcraze.io/documentation/repository/crazyflie-firmware/master/userguides/decks/micro-sd-card-deck/) (note the required file system) and Flow deck v2 on a Crazyflie.
 
-Place **testing-levels/testing-frameworks/pitl/config.txt** in the root of the SD card.
+Place `testing-levels/testing-frameworks/pitl/config.txt` in the root of the SD card.
 
-Compile firmware with dedicated autonomous sequence and macro definition by running `make pitl` from **crazyflie-firmware/examples/demos/app_steps/**.
+Compile firmware with dedicated autonomous sequence and macro definition by running `make pitl` from `crazyflie-firmware/examples/demos/app_steps/`.
 
 Flash the firmware with a crazyradio by running `make cload` or `make flash` if you have the St-Link and the hardware is connected.
 **BE CAREFUL** as soon as the firmware is flashed and the drone boots it will take off!! make sure you are at proper distance from it. **TPI:** old it in your hand to prevent the sensors calibration and that it takes off immediately, then turn it off and start it after placing it in an adequate starting point.
