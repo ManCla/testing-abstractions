@@ -55,6 +55,12 @@ Place **testing-levels/testing-frameworks/pitl/config.txt** in the root of the S
 
 Compile firmware with dedicated autonomous sequence and macro definition by running `make pitl` from **crazyflie-firmware/examples/demos/app_steps/**.
 
-Flash the firmware by running `make cload`.
+Flash the firmware with a crazyradio by running `make cload` or `make flash` if you have the St-Link and the hardware is connected.
+**BE CAREFUL** as soon as the firmware is flashed and the drone boots it will take off!! make sure you are at proper distance from it. **TPI:** old it in your hand to prevent the sensors calibration and that it takes off immediately, then turn it off and start it after placing it in an adequate starting point.
 
-After the test, use `pitl_main.py` to translate logging data from the SD card to the format used for other abstractions.
+After the test, copy the flight data from the SD card into the `flightdata`  directory. Run:
+
+> pitl_main.py file-name 
+
+to translate the logged data from the SD card to the format used by the plotting script.
+Plot the data from the output file like for the other testing setups.
