@@ -73,6 +73,6 @@ Instructions on how to run the testing setups are provided in the readme file of
 
 ## How to Plot Test Results 
 
-Detailed instructions are provided in the **plot/** directory but to just display the results from a test use:
+Detailed instructions are provided in the **testing-frameworks/plot/** directory but to just display the results from a test use:
 
 > python plot_main.py show path/to/flight-data
