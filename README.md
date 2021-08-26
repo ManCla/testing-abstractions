@@ -8,11 +8,11 @@ Moreover are also provided the flight data for each experiment, together with pr
 
 ## Repository Structure:
 
- * **mitl**: directory associated to the Model-In-The-Loop testing setup
- * **sitl**: directory associated to the Software-In-The-Loop testing setup
- * **hitl**: directory associated to the Hardware-In-The-Loop testing setup
- * **pitl**: directory associated to the Process-In-The-Loop testing setup
- * **plot**: directory containing the Python plotting class
+ * **testing-frameworks/mitl**: directory associated to the Model-In-The-Loop testing setup
+ * **testing-frameworks/sitl**: directory associated to the Software-In-The-Loop testing setup
+ * **testing-frameworks/hitl**: directory associated to the Hardware-In-The-Loop testing setup
+ * **testing-frameworks/pitl**: directory associated to the Process-In-The-Loop testing setup
+ * **testing-frameworks/plot**: directory containing the Python plotting class
  * **bugs**: directory containing the patch files that inject the bugs discussed in the paper
  * **firmware**: directory containing the firmware patch file and where to put binaries under test
 
