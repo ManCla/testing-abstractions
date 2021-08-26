@@ -33,8 +33,8 @@ From the Renode folder, run:
 ```console
 mono output/bin/Release/Renode.exe --disable-xwt --port 4444
 ```
-
-From another shell, run `python main_sitl.py <port>` where `<port>` is an optional argument used if the port used by Renode is altered.
+If the port `4444` is busy select another one.
+From another shell, run `python main_sitl.py <port>` where `<port>` is an optional argument used if the port used by Renode is different from `4444`.
 
 ## Run HitL
 
