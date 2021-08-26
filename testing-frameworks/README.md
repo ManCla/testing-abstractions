@@ -38,9 +38,9 @@ From another shell, run `python main_sitl.py <port>` where `<port>` is an option
 
 ## Run HitL
 
-Compile firmware with dedicated autonomous sequence and macro definition by running from `crazyflie-firmware/examples/demos/app_steps/` 
-
+Compile firmware with dedicated autonomous sequence and macro definition by running:
 ```console
+cd crazyflie-firmware/examples/demos/app_steps/
 make hitl
 ```
 
