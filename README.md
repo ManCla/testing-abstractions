@@ -1,6 +1,10 @@
 # Testing Abstractions for Testing of Embedded Control Software
 
 Repository associated to the paper _Comparison of Testing Abstractions for Integration Testing of Embedded Control Software_ submitted to ICSE 2022.
+The paper discusses the capacity of different testing setups to show bugs in control software.
+It contains an experimental campaign based on the [Crazyflie 2.1](https://store.bitcraze.io/products/crazyflie-2-1).
+In this repository you will find all the code used in the paper experiments and the instructions to reproduce the results.
+Moreover are also provided the flight data for each experiment, together with pre-generated pdf files containing the plots.
 
 ## Repository Structure:
 
