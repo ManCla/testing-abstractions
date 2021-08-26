@@ -28,7 +28,7 @@ Each testing setup folder contains:
 
 Everything has been tested with: MacOS 11.1 and Linux
 
-## Get the Crazyflie Firmware 
+## Getting the Right Version of the Crazyflie Firmware 
 Clone the [crazyflie-firmware](https://github.com/bitcraze/crazyflie-firmware) repository with
 
 > git clone --recursive git@github.com:bitcraze/crazyflie-firmware.git
@@ -55,7 +55,7 @@ and
 
 > git diff
 
-## Compile the code
+## Compile the Code for the Desired Setup 
 
 In a terminal window navigate to the `crazyflie-firmware` repository and then to the directory containing the [application](https://www.bitcraze.io/documentation/repository/crazyflie-firmware/master/userguides/app_layer/) that implements the autonomous flight performing the step sequence. Do so with the following:
 
@@ -67,7 +67,7 @@ Now you can compile the firmware for the desired testing setup with *one* of the
 > make hitl
 > make pitl
 
-## Running the tests
+## Running the Tests
 
 Instructions on how to run the testing setups are provided in the readme file of the `testing-frameworks` directory.
 
