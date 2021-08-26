@@ -53,7 +53,7 @@ Now you can inspect the changes we made to the firmware with (or by just looking
 
 and 
 
-> git diff
+> git diff path/to/file/file-name
 
 ## Compile the Code for the Desired Setup 
 
