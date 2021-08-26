@@ -1,6 +1,6 @@
-# testing-levels
+# Testing Abstractions for Testing of Embedded Control Software
 
-Repository associated to the paper _Comparison of Testing Abstractions for Integration Testing of Embedded Control Software_. 
+Repository associated to the paper _Comparison of Testing Abstractions for Integration Testing of Embedded Control Software_ submitted to ICSE 2022.
 
 ## Repository Structure:
 
