@@ -4,7 +4,8 @@
  * **2** Install dependencies according to [Building Renode from source](https://renode.readthedocs.io/en/latest/advanced/building_from_sources.html#core-prerequisites).
  * **3** [Build](https://renode.readthedocs.io/en/latest/advanced/building_from_sources.html#building-renode) Renode.
 
-#Set-up
+# Set-up
+
 Replace **renode/platforms/boards/cf2.repl** with the **cf2.repl** file provided in this directory.
 
 Edit, in **renode/scripts/single-node/crazyflie.resc**, the line 
