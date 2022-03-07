@@ -85,7 +85,7 @@ Flash the firmware with a crazyradio by running `make cload` or `make flash` if 
 After the test, copy the flight data from the SD card into the `flightdata`  directory. Run:
 
 ```console
-pitl_main.py file-name 
+python pitl_main.py path/to/file-name 
 ```
 
 to translate the logged data from the SD card to the format used by the plotting script.
