@@ -1,3 +1,16 @@
+diff --git a/Makefile b/Makefile
+index bfd3c137..e04c20ae 100644
+--- a/Makefile
++++ b/Makefile
+@@ -59,7 +59,7 @@ PORT = $(FREERTOS)/portable/GCC/ARM_CM4F
+ LINKER_DIR = $(CRAZYFLIE_BASE)/tools/make/F405/linker
+ ST_OBJ_DIR  = $(CRAZYFLIE_BASE)/tools/make/F405
+ 
+-OPENOCD_TARGET    ?= target/stm32f4x_stlink.cfg
++OPENOCD_TARGET    ?= target/stm32f4x.cfg
+ 
+ 
+ # St Lib
 diff --git a/examples/demos/app_steps/.gitignore b/examples/demos/app_steps/.gitignore
 new file mode 100644
 index 00000000..a743f37a
