@@ -1,10 +1,10 @@
 # Testing Abstractions for Testing of Embedded Control Software
 
-Repository associated to the paper _Comparison of Testing Abstractions for Integration Testing of Embedded Control Software_ submitted to ICSE 2022.
-The paper discusses the capacity of different testing setups to show bugs in control software.
+Repository associated to the paper _Testing Abstractions for Cyber-Physical Control Systems_ submitted to FSE 2022.
+The paper discusses the capacity of different testing setups to show faults in control software.
 It contains an experimental campaign based on the [Crazyflie 2.1](https://store.bitcraze.io/products/crazyflie-2-1).
 In this repository you will find all the code used in the paper experiments and the instructions to reproduce the tests.
-Moreover are also provided the flight data for each experiment, together with pre-generated pdf files containing the plots.
+Moreover we provide the flight data for each experiment, together with pre-generated pdf files containing the plots.
 
 ## Repository Structure:
 
@@ -14,19 +14,19 @@ Moreover are also provided the flight data for each experiment, together with pr
  * **testing-frameworks/pitl**: directory associated to the Process-In-The-Loop testing setup
  * **testing-frameworks/plot**: directory containing the Python plotting class
  * **bugs**: directory containing the patch files that inject the bugs discussed in the paper
- * **firmware**: directory containing the firmware patch file and where to put binaries under test
+ * **firmware**: directory containing the firmware patch file and where to put the compiled binaries under test
 
 Each testing setup folder contains:
 
- * the Python class files specific to each abstraction. An exception is made for the physical model simulator: the one in the **mitl** folder is used at each testing abstraction.
+ * the Python class files specific to each abstraction. An exception is made for the physical model simulator: the class file of the physical model in the **mitl** folder is used at _every_ testing abstraction.
  * a subfolder **flightdata** containing the flight data for each test shown in the paper.
- * a subfolder **pdf** containing the complete plots of the flight data for each test shown in the paper.
+ * a subfolder **pdf** containing the complete pre-generated plots of the flight data for each test shown in the paper.
 
 ## Dependencies
 
 [Python 3](https://www.python.org/downloads/release/python-391/), [openOCD](https://www.openocd.org/), [Renode](https://renode.io/) (setup instructions in the `testing-frameworks/sitl` directory), [gdb](https://www.gnu.org/software/gdb/)
 
-Everything has been tested with: MacOS 11.1 and Linux
+Everything has been tested with: MacOS 11.1 and Linux Fedora
 
 ## Getting the Right Version of the Crazyflie Firmware 
 Clone the [crazyflie-firmware](https://github.com/bitcraze/crazyflie-firmware) repository with

@@ -1,14 +1,14 @@
 # Running the testing setups
 
 This readme file contains the instructions to run the flight tests.
-Each test flight you run will generate test data that are stored in the associated `flightdata` subdirectory in a file named after the time the test was performed.
+Each test flight you run will generate test data that are stored in the associated `flightdata` subdirectory in a file named according to the time at which the test was performed.
 Show plots for the data with:
 
 ```console
 python plot_main.py show path/to/flight-data
 ```
 
-Substitute `show` with `pdf` if you want instead to generate a pdf file with the plots (latex has to be installed and it will take some time).
+Substitute `show` with `pdf` if you want instead to generate a pdf file with the plots (latex has to be installed and _it will take some time_).
 
 ## Run MitL
 
@@ -19,7 +19,7 @@ python mitl_main.py
 ```
 
 ## Run SitL
-Follow the setup instructions in `testing-frameworks/sitl/README.md`. This only needs to be performed once.
+Follow the setup instructions in `testing-frameworks/sitl/README.md` to set up the hardware emulator [Renode](https://renode.io/). This only needs to be performed once.
 
 Compile firmware with dedicated autonomous sequence and macro definition by running from a terminal window:
 ```console
@@ -27,7 +27,7 @@ cd crazyflie-firmware/examples/demos/app_steps/
 make sitl
 ```
 
-Place the `cf2.elf` binary and `cf2.map` files in `../firmware/`
+Place the `cf2.elf` binary and `cf2.map` files in `cps-testing-abstractions/firmware/`
 
 From the Renode folder, run: 
 ```console

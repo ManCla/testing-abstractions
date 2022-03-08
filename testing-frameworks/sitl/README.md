@@ -14,4 +14,4 @@ Edit, in **renode/scripts/single-node/crazyflie.resc**, the line
 
 to
 
->`sysbus LoadELF @/path/to/testing-levels/firmware/cf2.elf`
+>`sysbus LoadELF @/path/to/cps-testing-abstractions/firmware/cf2.elf`
