@@ -9,7 +9,7 @@ directory = 'pitl/flightdata/nominal-repeated'
 # length of traces
 trace_length = 10000
 # generate csv files or not
-gen_csv = True
+gen_csv = False
 csv_name = 'repeated_nominal.csv'
 
 if __name__ == "__main__":
