@@ -15,6 +15,10 @@ class Storage:
   def __init__(self):
     pass
 
+  #################################
+  ### DATA IN AND OUT FUNCTIONS ###
+  #################################
+
   def save(self, directory):
     # saves itself to file named as current date and time
     filename = time.strftime('%d%b%Y_%H%M%S', time.localtime())
@@ -96,6 +100,10 @@ class Storage:
     self.control_motor_2 = self.data.u[1, :]
     self.control_motor_3 = self.data.u[2, :]
     self.control_motor_4 = self.data.u[3, :]
+
+  ######################################
+  ### GENERATE CSV AND TEK FUNCTIONS ###
+  ######################################
 
   def save_csv(self, csv_location):
 
@@ -272,6 +280,10 @@ class Storage:
       f.write(r'}' + '\n')
       f.write(r'\end{document}' + '\n')
 
+  ##########################
+  ### PLOTTING FUNCTIONS ###
+  ##########################
+
   def trajectoryPlot(self):
     if not(self.type=='pitl'):# plot trajectory in space
       plt.figure('3D trajectory')
@@ -399,7 +411,6 @@ class Storage:
       axs[2, 1].grid(color=chosen_grid_color, linestyle=chosen_grid_linestyle, linewidth=chosen_grid_linewidth)
     print('* figure 3:\033[33m sensor data and Kalman errors\033[0m')
 
-
   def controlActionPlot(self):
     # now plot all the others
     chosen_size = (20, 7)
@@ -434,6 +445,10 @@ class Storage:
     self.controlActionPlot()
     plt.show()
 
+  #############################
+  ### GENERATE PDF FUNCTION ###
+  #############################
+
   def pdf(self, experiment_name):
     # first save the data to an intermediate csv file
     intermediate_data_file = "data.csv"
@@ -460,6 +475,3 @@ class Storage:
         print('* removed intermediate file: \033[33m' + str(intermediate_latex_file) + '\033[0m + .aux .log')
       except OSError:
         pass
-
-
-
