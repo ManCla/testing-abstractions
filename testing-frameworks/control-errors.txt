@@ -1,0 +1,12 @@
+                  mitl      sitl     hitl     pitl
+nominal            142       134      135      202
+voltageCompCast      -      2813     2813     2488
+initalPos            -      1856     1869     1400
+flowGyroData         -      4758     4130     3954
+motorRatioDef        -       157      192      218
+simUpdate            -       134      134      214
+byteSwap             -      2841      134   210345
+gyroAxesSwap         -     13464      134   272562
+timingKalman         -    172849      139      200
+flowDeckdtTiming     -    131575      136      202
+slowTick             -       133      135      245
