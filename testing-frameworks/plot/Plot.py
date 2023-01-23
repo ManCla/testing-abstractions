@@ -25,16 +25,17 @@ class Storage:
     with open(directory+"/"+filename, "wb") as f:
       pk.dump(self, f, protocol=pk.HIGHEST_PROTOCOL)
 
-  def open(self, data_location, experiment_name):
+  def open(self, data_location, experiment_name,silent=False):
     self.data_location = data_location
     self.experiment_name = str(experiment_name)
 
     with open(self.data_location, 'rb') as f:
       self.data = pk.load(f)
-    print('Reading data from file: \033[4m' + self.data_location + '\033[0m')
-    if hasattr(self.data, 'type'):
-      self.type = self.data.type
-      print('Type of test is: ' + self.type)
+    if silent==False :
+      print('Reading data from file: \033[4m' + self.data_location + '\033[0m')
+      if hasattr(self.data, 'type'):
+        self.type = self.data.type
+        print('Type of test is: ' + self.type)
     self.unwrap()
 
   def unwrap(self):
