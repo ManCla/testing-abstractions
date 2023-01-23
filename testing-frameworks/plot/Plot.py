@@ -31,10 +31,11 @@ class Storage:
 
     with open(self.data_location, 'rb') as f:
       self.data = pk.load(f)
+    if hasattr(self.data, 'type'):
+      self.type = self.data.type
     if silent==False :
       print('Reading data from file: \033[4m' + self.data_location + '\033[0m')
-      if hasattr(self.data, 'type'):
-        self.type = self.data.type
+      if hasattr(self, 'type'):
         print('Type of test is: ' + self.type)
     self.unwrap()
 
