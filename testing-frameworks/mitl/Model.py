@@ -11,7 +11,7 @@ import sys
 
 import random as rnd
 
-from numba import jit
+# from numba import jit # not used anyway
 
 class cfSim():
 	def __init__(self, seed=1):
