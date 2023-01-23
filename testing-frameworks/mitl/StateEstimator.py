@@ -20,7 +20,7 @@ def rateDo(rate, tick):
 
 class cfEKF():
 
-    def __init__(self, g):
+    def __init__(self, g, initialPosBUG=False):
         # drone parameters
         self.g = g 
 
@@ -42,6 +42,8 @@ class cfEKF():
 
         # filter states
         self.x = np.zeros(9)     # estimated state: position, speed, attitude error
+        if initialPosBUG:
+            self.x[0]= 1.5
         self.q = np.array([1,0,0,0])
         self.R = np.identity(3)
         self.P = np.diag([100,100,1,0.01,0.01,0.01,0.01,0.01,0.01])  # covar matrix init

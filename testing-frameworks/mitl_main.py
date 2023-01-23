@@ -7,6 +7,9 @@ import time
 # import class for storing
 from plot.Plot import Storage 
 
+# macros to inject bugs in controller
+initialPos = False
+
 if __name__ == "__main__":
 	start_test = time.perf_counter()
 
@@ -16,7 +19,7 @@ if __name__ == "__main__":
 	ctrl = cfCtrl(reference, physics.config, physics.b,\
 	              physics.I, physics.m, physics.g,\
 	              physics.k, physics.l)
-	est  = cfEKF(physics.g)
+	est  = cfEKF(physics.g, initialPosBUG=initialPos)
 
 	# simulation parameters
 	t_init  = 0
