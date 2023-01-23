@@ -281,6 +281,29 @@ class Storage:
       f.write(r'\end{document}' + '\n')
 
   ##########################
+  ### ANALYSIS FUNCTIONS ###
+  ##########################
+
+  '''
+  Function to compute the control error along the three
+  directions.
+  For MIL, SIL, and HIL is computed against the ground truth
+  For PIL is computed against the estimated position
+  '''
+  def computeControlError(self):
+    def square (x):
+      return x*x
+    if not(self.type=='pitl'):
+      self.error_x = sum(map(square,self.setpoint_position_x-self.position_x))
+      self.error_y = sum(map(square,self.setpoint_position_y-self.position_y))
+      self.error_z = sum(map(square,self.setpoint_position_z-self.position_z))
+    else :
+      self.error_x = sum(map(square,self.setpoint_position_x-self.estimated_position_x))
+      self.error_y = sum(map(square,self.setpoint_position_y-self.estimated_position_y))
+      self.error_z = sum(map(square,self.setpoint_position_z-self.estimated_position_z))
+    return [self.error_x, self.error_y, self.error_z]
+
+  ##########################
   ### PLOTTING FUNCTIONS ###
   ##########################
 
