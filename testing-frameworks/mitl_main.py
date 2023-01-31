@@ -9,6 +9,7 @@ from plot.Plot import Storage
 
 # macros to inject bugs in controller
 initialPos = False
+gyroAxesSwap = True
 
 if __name__ == "__main__":
 	start_test = time.perf_counter()
@@ -72,7 +73,11 @@ if __name__ == "__main__":
 
 		# store measurements
 		acc[:,i]  = physics.readAcc(noise)
-		gyro[:,i] = physics.readGyro(noise)
+		if not(gyroAxesSwap) :
+			gyro[:,i] = physics.readGyro(noise)
+		else:
+			tmp = physics.readGyro(noise)
+			gyro[:,i] = [tmp[1],tmp[0],tmp[2]]
 		pxCount[:,i] = physics.readPixelcount(noise, quantisation)
 		zrange[i] = physics.readZRanging(noise)
 		# close loop 
