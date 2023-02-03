@@ -8,8 +8,9 @@ import time
 from plot.Plot import Storage 
 
 # macros to inject bugs in controller
-initialPos = False
-gyroAxesSwap = True
+initialPos   = False
+gyroAxesSwap = False
+simUpdate    = False
 
 if __name__ == "__main__":
 	start_test = time.perf_counter()
@@ -20,7 +21,8 @@ if __name__ == "__main__":
 	ctrl = cfCtrl(reference, physics.config, physics.b,\
 	              physics.I, physics.m, physics.g,\
 	              physics.k, physics.l)
-	est  = cfEKF(physics.g, initialPosBUG=initialPos)
+	est  = cfEKF(physics.g, initialPosBUG=initialPos,
+	                        simUpdateBug=simUpdate)
 
 	# simulation parameters
 	t_init  = 0

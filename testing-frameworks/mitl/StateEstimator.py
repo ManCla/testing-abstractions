@@ -18,9 +18,28 @@ def rateDo(rate, tick):
     #utility function to trigger events at expected rate
     return not(tick % (mainRate/rate))
 
+'''
+Buggy version of the dot function for Matrix-Vector multiplication.
+Used to inject the simUpdate bug in the MIL setup.
+'''
+def buggyVctMtxMultp(M,v):
+    # check dimensions
+    if not(len(M[:][0])==len(v)):
+        print("ERROR: incompatible dimensions for matrix-vector multiplication")
+    if not(len(M[:][0])==len(M)):
+        print("ERROR: matrix should be square")
+    # actual matrix-vector multiplication
+    for rIdx, row in enumerate(M[:]):     # iterate over rows
+        tmp=0
+        for cIdx, elem in enumerate(row): # iterate over columns
+            tmp = tmp + v[cIdx]*elem
+        v[rIdx]=tmp
+    return v
+
+
 class cfEKF():
 
-    def __init__(self, g, initialPosBUG=False):
+    def __init__(self, g, initialPosBUG=False, simUpdateBug=False):
         # drone parameters
         self.g = g 
 
@@ -52,7 +71,10 @@ class cfEKF():
         self.flowerror = np.zeros(2)
         self.zerror = 0
 
-        self.tick = 0 # counter 
+        self.tick = 0 # counter
+
+        # booleans for bug injection
+        self.simUpdateBug = simUpdateBug
 
     #########################
     ### UTILITY FUNCTIONS ###
@@ -84,6 +106,17 @@ class cfEKF():
         self.P = (self.P+self.P.transpose())/2
 
     def quatMult(self, dq, q):
+        out = np.zeros(4)
+        out[0] = dq[0]*q[0]-dq[1]*q[1]-dq[2]*q[2]-dq[3]*q[3]
+        out[1] = dq[1]*q[0]+dq[0]*q[1]+dq[3]*q[2]-dq[2]*q[3]
+        out[2] = dq[2]*q[0]-dq[3]*q[1]+dq[0]*q[2]+dq[1]*q[3]
+        out[3] = dq[3]*q[0]+dq[2]*q[1]-dq[1]*q[2]+dq[0]*q[3]
+        return out
+
+    '''
+    Version of quatMult that includes the simultaneous update bug
+    '''
+    def quatMultBuggy(self, dq, q):
         out = np.zeros(4)
         out[0] = dq[0]*q[0]-dq[1]*q[1]-dq[2]*q[2]-dq[3]*q[3]
         out[1] = dq[1]*q[0]+dq[0]*q[1]+dq[3]*q[2]-dq[2]*q[3]
@@ -124,7 +157,10 @@ class cfEKF():
         dt2 = pow(dt,2)
         v   = self.x[3:6]*dt+acc*(dt2/2)
         self.x[0:3] = self.x[0:3]+self.R.dot(v)+np.array([0,0,-self.g*dt2/2])
-        self.x[3:6] = self.x[3:6]+dt*(acc-(self.cross(gyro).dot(self.x[3:6]))-self.g*self.R[2,:])
+        if not(self.simUpdateBug):
+            self.x[3:6] = self.x[3:6]+dt*(acc-(self.cross(gyro).dot(self.x[3:6]))-self.g*self.R[2,:])
+        else :
+            self.x[3:6] = self.x[3:6]+dt*(acc-(buggyVctMtxMultp(self.cross(gyro),self.x[3:6]))-self.g*self.R[2,:])
         angle  = np.linalg.norm(gyro*dt)
         ca     = np.cos(angle/2)
         sa     = np.sin(angle/2)
@@ -132,7 +168,10 @@ class cfEKF():
             dq = np.array([1,0,0,0])
         else:
             dq = np.array([ca, sa*dt*gyro[0]/angle, sa*dt*gyro[1]/angle, sa*dt*gyro[2]/angle])
-        self.q = self.quatMult(dq,self.q)      # rotation in quaternions
+        if not(self.simUpdateBug):
+            self.q = self.quatMult(dq,self.q)      # rotation in quaternions
+        else :
+            self.q = self.quatMultBuggy(dq,self.q)      # rotation in quaternions
         self.q = self.q/np.linalg.norm(self.q) # normalize
  
 
@@ -202,7 +241,10 @@ class cfEKF():
             dq = np.array([1,0,0,0])
         else:
             dq = np.array([ca, sa*self.x[6]/angle, sa*self.x[7]/angle, sa*self.x[8]/angle])
-        self.q = self.quatMult(dq,self.q)      # rotation in quaternions
+        if not(self.simUpdateBug) :
+            self.q = self.quatMult(dq,self.q)      # rotation in quaternions
+        else :
+            self.q = self.quatMultBuggy(dq,self.q) # rotation in quaternions
         self.q = self.q/np.linalg.norm(self.q) # normalize
 
         # rotate covariance since we rotated body
