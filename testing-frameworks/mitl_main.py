@@ -8,7 +8,7 @@ import time
 from plot.Plot import Storage 
 
 # macros to inject bugs in controller
-initialPos   = False
+initialPos   = True
 gyroAxesSwap = False
 simUpdate    = False
 slowTick     = False
