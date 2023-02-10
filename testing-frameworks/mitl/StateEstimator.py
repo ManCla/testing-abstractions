@@ -39,7 +39,9 @@ def buggyVctMtxMultp(M,v):
 
 class cfEKF():
 
-    def __init__(self, g, initialPosBUG=False, simUpdateBug=False):
+    def __init__(self, g, initialPosBug=False,
+                          simUpdateBug=False,
+                          slowTickBug=False):
         # drone parameters
         self.g = g 
 
@@ -61,7 +63,7 @@ class cfEKF():
 
         # filter states
         self.x = np.zeros(9)     # estimated state: position, speed, attitude error
-        if initialPosBUG:
+        if initialPosBug:
             self.x[0]= 1.5
         self.q = np.array([1,0,0,0])
         self.R = np.identity(3)

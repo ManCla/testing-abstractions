@@ -34,7 +34,8 @@ class PID():
 
 class cfCtrl():
 	
-	def __init__(self, refType, config, b, I, m, g, k, l):
+	def __init__(self, refType, config, b, I, m, g, k, l,
+				 slowTickBug=False):
 		#drone parameters
 		self.b = b
 		self.I = I

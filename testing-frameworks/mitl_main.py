@@ -11,6 +11,7 @@ from plot.Plot import Storage
 initialPos   = False
 gyroAxesSwap = False
 simUpdate    = False
+slowTick     = False
 
 if __name__ == "__main__":
 	start_test = time.perf_counter()
@@ -20,9 +21,11 @@ if __name__ == "__main__":
 	reference = "step"
 	ctrl = cfCtrl(reference, physics.config, physics.b,\
 	              physics.I, physics.m, physics.g,\
-	              physics.k, physics.l)
-	est  = cfEKF(physics.g, initialPosBUG=initialPos,
-	                        simUpdateBug=simUpdate)
+	              physics.k, physics.l,
+	              slowTickBug=slowTick)
+	est  = cfEKF(physics.g, initialPosBug=initialPos,
+	                        simUpdateBug=simUpdate,
+	                        slowTickBug=slowTick)
 
 	# simulation parameters
 	t_init  = 0
