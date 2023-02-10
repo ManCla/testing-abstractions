@@ -68,7 +68,10 @@ class cfCtrl():
 		self.phidPID   = PID(250,500,2.5,attDT)
 		self.thetadPID = PID(250,500,2.5,attDT)
 		self.psidPID   = PID(120,16.7,0,attDT)
-		
+
+		# booleans for bug injection
+		self.slowTickBug = slowTickBug
+
 	#############################
 	### TORQUE -> PWM MAPPING ###
 	#############################
@@ -126,11 +129,18 @@ class cfCtrl():
 		eta_fw    =  (eta*180.0/np.pi)*np.array([1,-1,-1])
 		etadot_fw = (gyro*180.0/np.pi)*np.array([1,-1,-1])
 		# position control
-		if rateDo(ratePosition, self.tick):
-			self.T, self.etaDesired = self.positionCtrl(pos_r, pos, vel, eta_fw)
-		# attitude control
-		if rateDo(rateAttitude, self.tick):
-			self.tau = self.attitudeCtrl(self.etaDesired, eta_fw, etadot_fw)
+		if not(self.slowTickBug) :
+			if rateDo(ratePosition, self.tick):
+				self.T, self.etaDesired = self.positionCtrl(pos_r, pos, vel, eta_fw)
+			# attitude control
+			if rateDo(rateAttitude, self.tick):
+				self.tau = self.attitudeCtrl(self.etaDesired, eta_fw, etadot_fw)
+		else :
+			if rateDo(ratePosition*(1000/800), self.tick):
+				self.T, self.etaDesired = self.positionCtrl(pos_r, pos, vel, eta_fw)
+			# attitude control
+			if rateDo(rateAttitude*(1000/800), self.tick):
+				self.tau = self.attitudeCtrl(self.etaDesired, eta_fw, etadot_fw)
 		self.tick = self.tick + 1
 		# output PWM values
 		return self.forcesToPWMcrossConfig(self.T, self.tau)

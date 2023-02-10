@@ -77,6 +77,7 @@ class cfEKF():
 
         # booleans for bug injection
         self.simUpdateBug = simUpdateBug
+        self.slowTickBug = slowTickBug
 
     #########################
     ### UTILITY FUNCTIONS ###
@@ -273,17 +274,26 @@ class cfEKF():
         # of all the timings of the kalman filter steps
         update = False
 
-        if rateDo(predictionRate, self.tick):
-            self.predictionStep(acc,gyro,predDT)
-            update = True
-
-        if rateDo(zrangingRate, self.tick):
-            self.correctionZranging(zrange)
-            update = True
-
-        if rateDo(flowRate, self.tick):
-            self.correctionFlow(pxCount,gyro,flowDT)
-            update = True
+        if not(self.slowTickBug) :
+            if rateDo(predictionRate, self.tick):
+                self.predictionStep(acc,gyro,predDT)
+                update = True
+            if rateDo(zrangingRate, self.tick):
+                self.correctionZranging(zrange)
+                update = True
+            if rateDo(flowRate, self.tick):
+                self.correctionFlow(pxCount,gyro,flowDT)
+                update = True
+        else :
+            if rateDo(predictionRate*(1000/800), self.tick):
+                self.predictionStep(acc,gyro,predDT)
+                update = True
+            if rateDo(zrangingRate*(1000/800), self.tick):
+                self.correctionZranging(zrange)
+                update = True
+            if rateDo(flowRate*(1000/800), self.tick):
+                self.correctionFlow(pxCount,gyro,flowDT)
+                update = True
 
         # call finalize state is update has been made
         if update:
