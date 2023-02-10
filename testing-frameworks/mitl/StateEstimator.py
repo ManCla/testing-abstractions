@@ -16,7 +16,7 @@ flowDT = 1/flowRate
 
 def rateDo(rate, tick):
     #utility function to trigger events at expected rate
-    return not(tick % (mainRate/rate))
+    return not(tick % int(mainRate/rate))
 
 '''
 Buggy version of the dot function for Matrix-Vector multiplication.

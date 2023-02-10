@@ -11,7 +11,7 @@ attDT = 1/rateAttitude
 
 def rateDo(rate, tick):
 	#utility function to trigger cascaded control loops at different rates
-	return not( tick % (rateMain/rate))
+	return not( tick % int(rateMain/rate))
 
 class PID():
 	def __init__(self, kp, ki, kd, dt):
