@@ -35,3 +35,6 @@ Tpwm=0.05;     %[Hz]
 TfilterPWM=140; % time constant of analog filter
 fo=[1/TfilterPWM 1];
 afDen=conv(fo,fo);
+
+% to store the data as csv run (and including time-data):
+% writematrix([linspace(0,10,167)',out.motivating_example]
