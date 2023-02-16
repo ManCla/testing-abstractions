@@ -1,5 +1,10 @@
 clear all
 
+%%%
+%%% ALWAYS REMEMBER TO DELETE THE SLPRJ FOLDER OTHERWISE IT MESSES UP WITH
+%%% THE C-CALLBACK BLOCK
+%%%
+
 % process matrices
 A=[-0.12 0; 5 0];
 B=[2.25; 0];
@@ -7,7 +12,7 @@ C=eye(2);
 D=[0;0];
 
 % sampling time of control loop
-st=0.05; % 50[ms]
+st=0.05; % 50[ms] -- 0.06 for hardware fault
 
 % square wave reference signal
 ramp=255;  % amplitude

@@ -1,7 +1,7 @@
 #include <inttypes.h>
 
 #define n 13
-#define f11 6143 /* Q2.13 correct: 8143 faulty: 6143 */
+#define f11 8143 /* Q2.13 correct: 8143 faulty: 6143 */
 #define f21 2042 /* Q2.13 */
 #define g1 919   /* Q2.13 */
 #define g2 115   /* Q2.13 */
