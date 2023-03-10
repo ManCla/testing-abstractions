@@ -6,6 +6,14 @@ It contains an experimental campaign based on the [Crazyflie 2.1](https://store.
 In this repository you will find all the code used in the paper experiments and the instructions to reproduce the tests.
 Moreover we provide the flight data for each experiment, together with pre-generated pdf files containing the plots.
 
+**Note on Different Nomenclature with respect to the Paper**
+
+In this repository the testing setup that includes the physical drone is called *process-in-the-loop* according to the control-engineering jargon that refers to the physical component of the CPS as the "process."
+However, in the software engineering literature the name "process" usually refers to an engineering process.
+Furthermore, the acronym PITL is also used for *processor-in-the-loop*.
+For such reason, to minimise the risk of confusion, in the paper we decided to use the nomenclature *real-physics-in-the-loop* abbreviated to RIL.
+Said in few words, the acronym RIL in the paper corresponds to PITL in this repository.
+
 ## Repository Structure:
 
  * **testing-frameworks/mitl**: directory associated to the Model-In-The-Loop testing setup
